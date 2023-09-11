@@ -1,10 +1,104 @@
 
-==================== OSI Model ==========================
+==================== CONCEPTS ==========================
 
-The OSI model is a conceptual framework that helps lay out how computer networking protocols should work with each other.
+OSI MODEL - The OSI model is a conceptual framework that helps lay out how computer networking protocols should work with each other.
+LAN - A Local Area Network is a network that connects devices which are in the same local area, like in a single office or a university campus or house.
+CoS - Class of Service helps resolve the problem of network congestion by giving certain types of traffic priority over others. Network congestion occurs when multiple messages are competing for network resources at the same time.
+
+================== Network Characteristics ================================
+
+topology  -  diagram HOW the devices are connected to each other
+speed   - faster is the network more it will cost
+cost   -  depends of the type of device are using, size of network, technology using
+security  - firewall, in the switches, in the routers, Intrusion Prevention Systems (IPS)
+availability - make sure it is always stays up, when it is a critical network it is good to double up the components
+scalability  - design a network in a way to easy grow, avoiding to redisgn
+reliability  - similiar to availability, make sure it is reliable and it is going to work
 
 
-==================== LAN ===============================
+================== OSI model 
 
-A Local Area Network is a network that connects devices which are in the same local area, like in a single office or a university campus or house.
+- it is conceptual
+- it is just a framework that characterises and standardises how computers communicate with one another over a network
+- seven layers
+- starts at the top to the bottom (sender) layer -> Encapsulation
+- go across the layer 1 the package
+- starts at the bottom to the top(receiver) layer -> De-Encapsulation
+- helps to troubleshooting, so you can analyse the issue layer by layer 
+- helps to learning a new network technology
+
+
+=================== Layer 7 - APPLICATION
+
+it establishes the availability of intended communication partners. It then synchronizes and establishes agreement on procedures for error recovery and control of data integrity. 
+Data integrity means checking that data has not been altered or corrupted in transit.
+
+=================== Layer 6 - PRESENTATION
+
+The Presentation Layer can translate among multiple data format using a common format.
+Ensures that communications that pass through it are in the appropriate form for the recipient application.
+
+=================== Layer 4 - SESSION
+
+This establishes, manages, and terminates sessions between two communicating hosts. 
+
+For example, we might have web servers which have got many users that are using that web server.
+So, in that case, we would have multiple incoming sessions. The Session Layer keeps track of all of those.
+
+It also offers efficient data transfer, Class of Service (CoS), which is similar to efficient data transfer,
+and exception reporting of upper layer problems.
+
+Class of Service (CoS) helps resolve the problem of network congestion by giving certain types of traffic priority over others.
+Network congestion occurs when multiple messages are competing for network resources at the same time.
+
+
+=================== Layer 4 - TRANSPORT
+
+TCP\UDP and port nummber
+if we want the communication between the two hosts to be reliable - TCP
+if speed is more important than reliability (voice or video) - UDP
+It breaks down large files into smaller segments that are less likely to incur transmission problems
+
+
+=================== Layer 3 - NETWORK
+
+IP Address (source and destination)
+Routers devices
+it provides connectivity and path selection between two host systems that may be located on geographically separated networks. 
+The Network Layer is the layer that manages the connectivity of hosts by providing logical addressing. IP addressing is our logical addressing.
+
+
+=================== Layer 2 - DATA-LINK
+
+MAC Address
+Switches devices
+The most important information is the source and destination Layer 2 address.
+it defines how data is formatted for transmission and how access to the physical media is controlled.
+It also typically includes error detection on correction to ensure a reliable delivery of the data.
+
+
+=================== Layer 1 - PHYSICAL 
+
+Hubs devices
+it enables bit transmission, the 1s and 0s, between end devices. It defines specifications needed for activating, maintaining, and
+deactivating the physical link between end devices. For example, voltage levels, physical data rates, maximum transmission distances, and physical connectors, etc.
+
+
+=================== TCP\IP STACK ===============================================
+
+TCP\IP stack is the main protocol stack used in production. It is also layered
+protocol means it is going to control HOW that communication should behave, HOW it should work. 
+
+DATA    - Application layer (OSI model - Application + Presentatiobn + Session): Represents data users, encodes and contols the dialog
+SEGMENT - Transport layer (OSI model - Transport): supports communication between end devices across a diverse network
+PACKET  - Internet layer (OSI model - Network): provides logical add and determines the best path through the network
+Network layer (OSI model - Data Link + Physical): controls the hardware devices and media that make up the network
+
+
+host communication terminology - data, segment, packet, frame
+
+when 2 hosts talk to each other they are exchanging Protocol Data Units (PDUs). But on daily PDUs are refered as packets
+this is the entire communication from layer 7 to layer 1
+
+
 
