@@ -4,6 +4,6 @@ Most of the knowledge I learned came from the internet. For me, it is important 
 
 I have decided to really understand and create a solid basic fundantion in networking. 
 
-This experience has boosted my confidence after successfully passing the exam.🎉
+This experience has boosted my confidence.
 
-I wish you all the best and good luck! Have fun!
+I wish you all the best and good luck! Have Fun!
