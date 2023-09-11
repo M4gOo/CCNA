@@ -4,6 +4,50 @@
 OSI MODEL - The OSI model is a conceptual framework that helps lay out how computer networking protocols should work with each other.
 LAN - A Local Area Network is a network that connects devices which are in the same local area, like in a single office or a university campus or house.
 CoS - Class of Service helps resolve the problem of network congestion by giving certain types of traffic priority over others. Network congestion occurs when multiple messages are competing for network resources at the same time.
+Out of Band Management -  most the large companies do is they'll also have a separate dedicated network for management. Gives you a backup path that you can use
+to connect to your network devices if they have any problems and it is more secure.
+Production Network (In Band) - it being used for your normal user traffic, the network that is used for your staff in their normal activities.
+
+
+================ COMMANDS =======================
+
+### short-cut and usefull settings/commands
+Ctrl + C - That will break out the command. Dont need to press space bar to see all the commands.
+Ctrl + A  - to move to the start of the line
+Putty conf scroll - in putty setting adjust 'line of scrollback'
+TAB - autocomplete the entire word
+DO show ... - use DO in the front in case you are in the global conf, usually show is used in the priv exec mmode
+end - back to the priv exec mode
+exit - back one level
+you dont need worry about case sensitive, only when using pipe (`|`)
+
+### help
+? or di?, en?, - If I want to see some commands available (use space bar or enter to see all commands) 
+<whatever> ? - it shows you all of the possible keywords for that particular command
+sh run | ?
+
+#### often commands
+disa (disable) - Router> - user exec prompt   (router is the name of the device, you can rename)
+en (enable) - Router# - privileged exec mode  
+debug -  the output will be updated in real time
+conf t (configure terminal) -  Router#(config) -  To actually make changes, we go to global configuration.
+show ip interface brief - show all the interfaces on the router, and the state of the interface, whether it's up or not, the IP address configured on the interface as well
+show running-config - that shows the entire configuration on the router
+show(sh) run interface <fast0/0> 
+sh run | begin hostname  - when use pipe is case sensitive
+
+
+
+
+
+==========================  TROUBLESHOOTING
+
+if a device just appears to be completely unresponsive, but it is powering on. So, that indicates that the device is probably failing to boot up.
+IP address on the device is not live until it has completed the bootup process.
+
+
+When you do a debug command, what will happen is that the output will be updated in real time.
+
 
 ================== Network Characteristics ================================
 
@@ -99,6 +143,49 @@ host communication terminology - data, segment, packet, frame
 
 when 2 hosts talk to each other they are exchanging Protocol Data Units (PDUs). But on daily PDUs are refered as packets
 this is the entire communication from layer 7 to layer 1
+
+
+
+=========================== OS on CISCO ==============================================
+
+they're all nearly exactly the same!
+IOS has got a monolithic kernel, meaning that if one process running on the router crashes, it can crash the entire router. The other newer Operating
+Systems have got microkernels, and the processes run in separate, protected memory address space. So if one of the processes crashes, it shouldn't affect the running on the rest of the system.
+
+NX-OS - Cisco Nexus and the MDS Data Centre switches
+
+IOS-XR - On the high-end service provider routers, the NCS and the CRS, and also on the ASR9000 and XR12000 routers
+
+IOS-XE ASR1000 service provider routers
+
+
+=========================== Connect to the Routers and Switches ==============================================
+
+---------------PuTTy - it is a free software
+the protocol used is SSH
+
+You don't want to have to configure all your administrators' usernames and passwords on all 100 of those devices separately.
+You want that to be centralized in AAA server. That stands for Authentication, Authorization, and Accounting.
+It's got access to the central database of all your usernames and passwords, so you'll be having them on each separate device.
+
+Out of Band Management -  most the large companies do is they'll also have a separate dedicated network for management. Gives you a backup path that you can use
+to connect to your network devices if they have any problems and it is more secure.
+Production Network (In Band) - it being used for your normal user traffic, the network that is used for your staff in their normal activities.
+
+
+---------------------- make a direct connection using a console cable
+
+Cisco devices do not usually have a default IP address, so we need to set one up before we can connect to it over the network
+need to select your correct COM port on your computer when you open the Putty software. To find this information openDevice Manager in Windows, and then look in your ports here, and you'll see the com port, and it's usually COM3
+
+You'll often see that it comes in useful for troubleshooting as well using console cable
+
+
+
+
+
+
+
 
 
 
