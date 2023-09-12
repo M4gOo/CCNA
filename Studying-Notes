@@ -20,23 +20,25 @@ DO show ... - use DO in the front in case you are in the global conf, usually sh
 end - back to the priv exec mode
 exit - back one level
 you dont need worry about case sensitive, only when using pipe (`|`)
+reload - reboot the device
+invalid  input error - check if you are at the right level or it is a typo
 
 ### help
 ? or di?, en?, - If I want to see some commands available (use space bar or enter to see all commands) 
 <whatever> ? - it shows you all of the possible keywords for that particular command
 sh run | ?
 
+
 #### often commands
 disa (disable) - Router> - user exec prompt   (router is the name of the device, you can rename)
 en (enable) - Router# - privileged exec mode  
 debug -  the output will be updated in real time
 conf t (configure terminal) -  Router#(config) -  To actually make changes, we go to global configuration.
-show ip interface brief - show all the interfaces on the router, and the state of the interface, whether it's up or not, the IP address configured on the interface as well
-show running-config - that shows the entire configuration on the router
+do show startup-config - startup configuration, any change it will be permanently even after reboot
+show running-config - that shows the entire running configuration on the router
+show ip interface brief - show all the interfaces available in the router, and the state of the interface, whether it's up or not, the IP address configured on the interface as well
 show(sh) run interface <fast0/0> 
 sh run | begin hostname  - when use pipe is case sensitive
-
-
 
 
 
@@ -47,6 +49,23 @@ IP address on the device is not live until it has completed the bootup process.
 
 
 When you do a debug command, what will happen is that the output will be updated in real time.
+
+
+========================= BACKUP CONFIGURATION =========================
+
+copy run start - Router# - being copied to the startup configuration, so change made in starup-config it will persistent.
+copy run flash:, then press ENTER, after type the name of your start configuration <my-config> - back up the configuration. 
+sh flash - To verify the copied configuration
+If I wanted to restore from this backup, first erase the start up configuration, because if you copy it will merge and not replace the commands.
+erase start or write erase (old versions)
+copy flash:<my-config> start
+
+This way you made a backup in the same device, which is not a good idea. So it is better to back it up somewhere else.
+The easiest way to do that would be to copy the running configuration to a TFTP server. You need to have this server on
+copy run tftp
+
+Check the content of my backup. That will print out here what the contents of that configuration file are.
+more flash:<my-config>
 
 
 ================== Network Characteristics ================================
@@ -82,7 +101,7 @@ Data integrity means checking that data has not been altered or corrupted in tra
 The Presentation Layer can translate among multiple data format using a common format.
 Ensures that communications that pass through it are in the appropriate form for the recipient application.
 
-=================== Layer 4 - SESSION
+=================== Layer 5 - SESSION
 
 This establishes, manages, and terminates sessions between two communicating hosts. 
 
@@ -102,6 +121,56 @@ TCP\UDP and port nummber
 if we want the communication between the two hosts to be reliable - TCP
 if speed is more important than reliability (voice or video) - UDP
 It breaks down large files into smaller segments that are less likely to incur transmission problems
+
+it provides transparent transfer of data between hosts and is responsible for end-to-end error recovery and flow control.
+flow control - adjusting the flow of data from the sender to ensure that the receiving host can handle all of it. The sender send a signla to slow down
+
+
+multiplexing - This is a process by which a host is able to support multiple sessions simultaneously and manage the individual traffic streams over a single link.
+It's the Layer 4, the Transport Layer, that is responsible for tracking (use the combination of source (usually is above 1024 and it  is random number) and destination port numbers) 
+and keeping control of the different sessions on a host. 
+The tracking system is how stateful firewalls are able to keep track of connections as well
+
+Explaining how multiplexing works:
+- sender on the left, and there's going be a couple of receivers over on the right.
+- The sender sends some email, SMTP traffic, to the top receiver on port 25, and it also sends
+some web traffic on HTTP port 80 to the bottom receiver, and it's also sending email traffic on port 25 to the bottom receiver as well. 
+- from the sender on the left, we've got three sessions from it. 
+The top receiver on the right, we've got one session
+the bottom receiver we've got two sessions
+
+
+TCP ---------------------------------
+
+The way that connection-oriented is set up between the two hosts is it uses the TCP three-way handshake.
+It sends a SYN, a Synchronized Message, over to the receiver. When the receiver receives that, it will send SYN-ACK back, so a Synchronized Acknowledgment,
+and then finally, to complete the connection, the sender will send an acknowledgment, ACK. So, connection set up between the two hosts, and they can send traffic over it.
+
+TCP carries out sequencing, so it includes sequence numbers in the traffic to ensure that segments are processed in the correct order, and none are missing.
+So when traffic comes into the receiver, it can look at the sequence number, and it can use that to make sure it assembles the traffic in the correct order again.
+
+TCP is reliable. It can also check from the sequence numbers if a segment was lost in transit as well. 
+Receiving host sends acknowledgments back to the sender. So based on the sequence numbers, the receiver can see
+if all the traffic has come in. If any traffic is being lost in transit, then it will tell the sender that happened. 
+The way it does it is by not sending an acknowledgment back to the sender. When a sender realizes that traffic is being lost, it will resend that traffic again
+
+TCP can also perform flow control, if the sender is sending a rate too high and the receiver cannot handle it, the receiver can signal back to the sender, telling it to slow down. 
+
+
+UDP ---------------------
+
+we don't have the connection, we don't have reliability.
+The sender just makes up the packet, sends it over to the receiver, and hopes that it's going to get there.
+So UDP, it's not connection-oriented.
+There's no handshake connection setup between the hosts. It doesn't carry out sequencing to ensure
+segments are processed in the correct order or missing. It's not reliable. The receiving host does not send
+acknowledgments back to the sender. It does not perform flow control.
+
+UDP is used in Voice and video, it's very sensitive to delay. 
+Watching the news report where the newscaster is doing it over a satellite phone (it's very laggy because satellites are famously high latency connections)
+So voice and video, it's very sensitive to latency.
+We don't want to use TCP for real-time traffic like that because the extra overhead is going to slow it down, and it's going to affect the quality.
+
 
 
 =================== Layer 3 - NETWORK
@@ -136,7 +205,7 @@ protocol means it is going to control HOW that communication should behave, HOW 
 DATA    - Application layer (OSI model - Application + Presentatiobn + Session): Represents data users, encodes and contols the dialog
 SEGMENT - Transport layer (OSI model - Transport): supports communication between end devices across a diverse network
 PACKET  - Internet layer (OSI model - Network): provides logical add and determines the best path through the network
-Network layer (OSI model - Data Link + Physical): controls the hardware devices and media that make up the network
+FRAME - Network layer (OSI model - Data Link + Physical): controls the hardware devices and media that make up the network
 
 
 host communication terminology - data, segment, packet, frame
@@ -158,6 +227,10 @@ IOS-XR - On the high-end service provider routers, the NCS and the CRS, and also
 
 IOS-XE ASR1000 service provider routers
 
+For the device to boot up, it needs to initially load the IOS operating system image, and that is stored in Flash.
+Once the operating system is up and running, then it will load your actual administrator configuration
+from the startup configuration, and the startup configuration is stored in NVRAM.
+That's non-volatile memory,so it's persistent across a reboot. 
 
 =========================== Connect to the Routers and Switches ==============================================
 
@@ -183,7 +256,19 @@ You'll often see that it comes in useful for troubleshooting as well using conso
 
 
 
+========================= FIREWALL ============================
 
+This is how stateful firewalls are able to keep track of connections as well.
+Imagine that rather than a switch in the middle there,
+if it was a firewall, and we had a rule in the firewall that said traffic is allowed out from the sender
+on the left out to the network on the right,
+but traffic is not allowed from the right to the left unless it was initiated from the sender.
+If you manage to follow that, well, in that case, on the firewall, we're allowing traffic from the sender
+to the receiver. That traffic is allowed outbound. When the return traffic comes back, the firewall could
+see based on the source and destination port numbers, "Oh, this is return traffic going back to that
+sender again,
+so I'll allow this traffic to come through." If your traffic had been initiated by the host on the right,
+it would not allow that traffic. Okay, so that's how stateful firewalls work
 
 
 
