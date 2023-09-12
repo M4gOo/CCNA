@@ -7,7 +7,7 @@ CoS - Class of Service helps resolve the problem of network congestion by giving
 Out of Band Management -  most the large companies do is they'll also have a separate dedicated network for management. Gives you a backup path that you can use
 to connect to your network devices if they have any problems and it is more secure.
 Production Network (In Band) - it being used for your normal user traffic, the network that is used for your staff in their normal activities.
-
+QoS - Quality of Service is, you might have one particular type of traffic that requires a better level of service than another level of traffic.
 
 ================ COMMANDS =======================
 
@@ -22,6 +22,8 @@ exit - back one level
 you dont need worry about case sensitive, only when using pipe (`|`)
 reload - reboot the device
 invalid  input error - check if you are at the right level or it is a typo
+ip route - output default via means default gateway in linux
+show ip interface - show the default gateway on cisco 
 
 ### help
 ? or di?, en?, - If I want to see some commands available (use space bar or enter to see all commands) 
@@ -50,6 +52,7 @@ IP address on the device is not live until it has completed the bootup process.
 
 When you do a debug command, what will happen is that the output will be updated in real time.
 
+Check TCP/IP is working use the command ping
 
 ========================= BACKUP CONFIGURATION =========================
 
@@ -172,13 +175,38 @@ So voice and video, it's very sensitive to latency.
 We don't want to use TCP for real-time traffic like that because the extra overhead is going to slow it down, and it's going to affect the quality.
 
 
-
 =================== Layer 3 - NETWORK
 
 IP Address (source and destination)
+Other Layer 3 protocols apart from IP include ICMP, which is the Internet Control Message Protocol, which is used for ping.
+
+troubleshooting
 Routers devices
-it provides connectivity and path selection between two host systems that may be located on geographically separated networks. 
+
 The Network Layer is the layer that manages the connectivity of hosts by providing logical addressing. IP addressing is our logical addressing.
+
+Layer is responsible for routing packets to their destination on the network
+it's also responsible for Quality of Service as well.
+Quality of Service is, you might have one particular type of traffic that requires a better level of service than another level of traffic.
+
+
+The network designer uses IP addressing to partition the overall network into smaller subnetworks, or commonly called subnets. By having different subnets,
+it improves performance and security and makes troubleshooting easier. 
+
+
+layer 3 header------------------------
+
+Maximum size by default in Ethernet is a 1500 byte MTU.
+If we try a packet onto the wire that is larger than that size, it has to get split up into smaller parts which are called our fragments.
+
+The second row of information on the IP header is used to help keep track of those fragments.
+
+The next row down, we have an 8-bit time to live (TTL) field.
+Every time a packet goes through a router, the router will decrement the TTL field by one.
+If it gets down to zero, then that router will drop the packet, this is for is to prevent routing loops.
+
+checksum which is used to check that packet has not been corrupted in transit.
+
 
 
 =================== Layer 2 - DATA-LINK
@@ -213,6 +241,122 @@ host communication terminology - data, segment, packet, frame
 when 2 hosts talk to each other they are exchanging Protocol Data Units (PDUs). But on daily PDUs are refered as packets
 this is the entire communication from layer 7 to layer 1
 
+
+=========================  unicast, broadcast, and multicast
+
+Three main types of traffic that will send over an IP network
+
+Unicast traffic - it's coming from a sender, and it's going to one particular host.
+Broadcast traffic - goes to all hosts on the subnet. the sender sends one copy of the traffic that will come into the switch, and then it gets flooded out to all other hosts on that particular part of the network. 
+if the traffic hit the router, it will not forward broadcast traffic on.
+Multicast traffic goes to multiple interested hosts - we send one copy that goes to multiple different destinations (we've got good bandwidth savings there!!!!)
+
+
+broadcast VS muticast
+
+broadcast traffic goes to everywhere on that particular part of the network, whether the receiver has requested it or not. 
+Multicast goes through multiple receivers, but it's targeted. They have to request it before they're going to actually get it. 
+
+A good analogy for multicast traffic is, you can think of it like tuning into a radio station. So all of the different receivers, they've tuned in that particular station, they're going to get that particular traffic.
+
+
+============================ BINARY
+
+Decimal 0 - 9,  every column add is multiple by 10
+Binary 0 - 1, every column add is multiple by 2
+
+
+IPv4 - 32 bits long, 4 octets ( each octet is 8 bits long)
+Each octet in the IP address has a value ranging from 0 to 255.
+
+8 bits -  128  |  64  |  32 |  16  |  8  |   4  |  2  |  1
+2^0 - 1
+2^1 - 2
+2^2 - 4
+2^3 - 8
+2^4 - 16
+2^5 - 32
+2^6 - 64
+2^7 - 128
+
+
+============================ SUBNET MASK
+
+To set the boundary between our logical networks, our subnets, the IP address is going to be combined with a subnet mask
+
+A host can send traffic directly to another host on the same subnet via the switches they're attached to. 
+But for a host to send traffic to another host in a different subnet, it must be forwarded by a router.
+Routers are our devices that link our different subnets together and route the traffic between them
+
+the way that the host knows whether the destination is on the same subnet or a different subnet is by comparing the IP address of the destination to its own IP address and the subnet mask.
+
+
+A host's IP address is divided into a 
+network portion and a host portion
+it's the subnet mask that defines where the boundary is between the network part and the host part of the address.
+A '1' in the subnet mask indicates that bit in the IP address is part of the network address, and a '0' indicates that the bit is part of the host address.
+
+
+there's two particular addresses that can not be assigned to a host.
+All 0's in the host portion designates the network address and is not allowed to be allocated to a host. All 0's signifies the network address, which is the bottom address in the range. 
+All 1's, which is the top address in the range, that is the directed broadcast. Whenever you send traffic to the directed broadcast address, it goes to all hosts in that subnet
+
+
+-------------- Classes A, B,C, D, E, F
+
+### Class A addresses are assigned to networks with a very large number of hosts, there's going to be a small network portion and a large host portion. /8
+1.0.0.0 to 126.255.255.254 (1 - 126)
+2^24 - 6,777,214 hosts per network.
+it's the first bits in the address are always going to be set to 0
+all 0s and 127 are not in the valid address range that we can assign to our hosts because they are reserved addresses. 
+0.0.0.0/8 is reserved and signifies 'this network', and it's used by some protocols. So, 0.0.0.1 to 0.255.255.255 are not valid addresses that you can assign to hosts.
+127.0.0.0/8, which is also in the Class A space, is also reserved. That is used as the loopback address, and it's used for testing the IP stack on the local computer.
+
+
+### Class B were originally assigned to medium to large-sized networks
+it's the first two bits in the address are always going to be set to 1 0
+default subnet mask is /16
+128.0.0.0 to 191.255.0.0 (128 - 191)
+
+
+### Class C is used for small networks
+They're always set to binary 1 1 0.
+default subnet mask is /24
+192.0.0.0 to 223.255.255.0 (192 - 223)
+
+
+### Class D is used for multicast addresses.
+the four high-order bits, the first four bits, in the first octet are always set to the binary value of 1 1 1 0
+224.0.0.0 to 239.255.255.255 (224 - 239)
+These Class D addresses, they're not allocated to hosts, and there's no default subnet mask
+With multicast traffic, we're going to send one copy of the traffic from 10.10.10.10, and that one copy
+is going to get sent to 10.10.10.15 and 10.10.20.15 as well.
+We are going to run an application on the sender, which is going to send it as multicast traffic, and in
+our example, we're going to send it to a destination multicast address of 239.0.0.1.
+It still comes from the same source address of 10.10.10.10, and the destinations still have their normal unicast addresses there as well,
+but we send it to this special multicast address. That will then go to all of the hosts that were interested in getting that traffic.
+
+
+### Class E addresses, they are experimental and reserved for future use.
+The first bits in a Class E are always set to 1 1 1 1.
+240.0.0.0 to 255.255.255. (240 - 255)
+these addresses do not have a default subnet mask.
+There is one special address used in Class E, which is the broadcast address of 255.255.255.255.
+
+
+----------------- PRIVATE ADDRESSES
+
+There's also a range of reserved private addresses in each class.
+Those are valid to be assigned to hosts, these ones are not routable on the public Internet.
+So, these were originally designed for hosts in a closed private network that should have no Internet connectivity.
+
+CLASS  A - 10.0.0.0 to 10.255.255.255
+CLASS  B -  172.16.0.0 to 172.31.255.255
+CLASS  C - 192.168.0.0 to 192.168.255.255
+
+
+
+============================= SUBNETING ============================================
 
 
 =========================== OS on CISCO ==============================================
