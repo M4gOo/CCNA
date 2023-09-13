@@ -435,11 +435,15 @@ so there's no anything physical on the other, so we'll usually allocate a /32 to
 
 ----------------- subnetting larger networks
 
+4th octet
 Class B it is /16 with /29 gives 6 hosts and 8192 (2^13  it is 13 cuz 29-16) subnets
 Class A it is /8 with /28 gives 14 hosts and 1048576 (2^20  it is 20 cuz 28-8) subnets
 
-
-
+3rd octet
+Lets use the IP addr 60.15.10.75/19
+Class A it is /8 with /19 gives 8190 (2^13 -2) hosts and 2048 (2^11  it is 11 cuz 19-8) subnets
+network 
+broadcast
 
 =========================== OS on CISCO ==============================================
 
