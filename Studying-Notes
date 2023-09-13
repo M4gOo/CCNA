@@ -409,9 +409,35 @@ with the subnetting is /25 it will split the networkss by 2 and divide by 2 the 
 
 ----------------- Variable Length Subnet Masks (VLSM).
 With early routing protocols, like RIPv1, they only supported Fixed Length Subnet Masks (FLSM), which meant you could subnet, but all subnets in a particular network had to be the same size.
+You couldn't mix and match /27, /28, /29 within the same larger network, but that ended up wasting a lot of addresses.
 support for Variable Length Subnet Masks means that within the same range, you can have different sizes of subnets
-we can use different length subnet masks within the same network.
+we can use different length subnet masks within the same network. 
 This is a good thing because it lets us be much more precise with the size of our networks, and we're going to be wasting a lot less addresses.
+
+
+
+========================= DESIGN THE SUBNETTING ==========================================
+
+The things that we need to consider when we're going to do the design are:
+
+how many different locations do we have in the network that are going to need subnets and how many hosts are going to be in each of those subnets?
+What are the IP addressing requirements for each of the different locations?
+So should different departments or types of hosts to be in different subnets?
+
+#  in a real world deployment, you want to have a scalable design.
+# Do 3 or 4 subnets of XX hosts because then if you do have a new department that requires up to XX hosts later, you've got a spare subnet there waiting for it,
+and everything is still sequential and contiguous, logical, going from largest down to smallest. (To find the XX number check your largest hosts in your design and add 2 or thress spare, it will cover
+further company growth).
+#  in the real world is you would also allocate address space for your loopback addresses. Loopback addresses are used for management. They're a logical address,
+so there's no anything physical on the other, so we'll usually allocate a /32 to our loopback addresses.
+# On network diagram put the network address IPs in every department and routers(devices) and next to the routers the first available host for the particular network address.
+
+
+----------------- subnetting larger networks
+
+Class B it is /16 with /29 gives 6 hosts and 8192 (2^13  it is 13 cuz 29-16) subnets
+Class A it is /8 with /28 gives 14 hosts and 1048576 (2^20  it is 20 cuz 28-8) subnets
+
 
 
 
