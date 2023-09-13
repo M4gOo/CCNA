@@ -24,6 +24,8 @@ reload - reboot the device
 invalid  input error - check if you are at the right level or it is a typo
 ip route - output default via means default gateway in linux
 show ip interface - show the default gateway on cisco 
+ip subnet-zero - disables removing 2 networks (all 0's and all 1's)
+
 
 ### help
 ? or di?, en?, - If I want to see some commands available (use space bar or enter to see all commands) 
@@ -357,6 +359,60 @@ CLASS  C - 192.168.0.0 to 192.168.255.255
 
 
 ============================= SUBNETING ============================================
+
+---------------- CIDR - Classless Inter-Domain Routing
+
+CIDR removed the fixed /8, /16, and /24 requirements for the different advanced classes and allowed them to be split into smaller networks, and the name for this is subnetting. 
+
+
+Summarization -  ISP B only learns one route to all the networks behind ISP A rather than learning 256,and ISP B will vice versa just advertise one route of 175.11.0.0/16 to ISP A.
+The benefits we get from summarization is that ISP A doesn't know about all 256 networks behind ISP B. It only gets a single summary route that covers all of them.
+It's more efficient, it takes up less memory in the router. And if an individual link goes down in an ISP B, it doesn't have any impact on ISP A because that one summary route doesn't change. 
+Compartmentalizing the different parts of our network, and if we've got an issue in part A of the network, it's not going to impact part B of the network.
+
+
+we can buy a single class C range, and then we can divide that network up into smaller networks and assign it to the different parts of our networks.
+we've got that Class C range, and it is 200.15.10.0/24, the default Class C subnet mask. So to do our subnetting, to divide that network into smaller subnets,
+we need to borrow some host bits and add them to the network portion of the address.
+To calculate the number of available subnets that we're going to get by moving the line to the right, we use a formula of 2 to the power of subnet bits.
+If a Class C network uses a /28 subnet mask, then we've borrowed 4 bits from the default of /24
+the difference between 24 and 28 is 4. The way we calculate how many subnets we're going to get by doing that is it's 2 to the power of the amount of SUBNET BITS THAT WE'VE BORROWED.
+it's 2 to the power of 4
+I'm going to now have 16 available subnets.
+
+To calculate the number of hosts, it's 2 to the power of how many HOSTS BTIS THERE ARE minus 2. (subtract 2 because we've got the network address and the broadcast address that can not be assigned to hosts)
+
+
+remember that hosts on different subnets need to go via a router if they want to communicate with each other.
+
+
+------------------- /31 - Cisco allowed that exception. broadcast and network address
+A /31 subnet breaks the standard rules of IP addressing, where we have to have the network address and the broadcast address at the top and the bottom of the range.
+on Cisco routers /31 is supported for point to point links means there's this one side and the other side.
+Well, any traffic that comes from here needs to go at the other side, and vice versa. There's nowhere else for it to go, so there isn't really any point in having a network and a broadcast address.
+
+
+------------------ /31 VS /30
+/31 supported a 128 subnetworks
+/30 only supported 64
+
+Better to use a /31. This is useful if you need to maximize the use of your address space.
+But a /30 is more commonly used, it's more standardized. For the CCNA exam always use a /30.
+If the question requires you to come up with a subnet that supports 2 hosts, use a /30 unless the question explicitly tells you to use a /31.
+
+---------------- /24
+with the subnetting is /25 it will split the networkss by 2 and divide by 2 the hosts
+/25 - 2 networks and 126 hosts (the other 2 is broadcast and network)
+/26 - 4 networks and 62 hosts  (the other 2 is broadcast and network)
+...
+
+
+----------------- Variable Length Subnet Masks (VLSM).
+With early routing protocols, like RIPv1, they only supported Fixed Length Subnet Masks (FLSM), which meant you could subnet, but all subnets in a particular network had to be the same size.
+support for Variable Length Subnet Masks means that within the same range, you can have different sizes of subnets
+we can use different length subnet masks within the same network.
+This is a good thing because it lets us be much more precise with the size of our networks, and we're going to be wasting a lot less addresses.
+
 
 
 =========================== OS on CISCO ==============================================
