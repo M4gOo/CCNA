@@ -195,6 +195,7 @@ Quality of Service is, you might have one particular type of traffic that requir
 The network designer uses IP addressing to partition the overall network into smaller subnetworks, or commonly called subnets. By having different subnets,
 it improves performance and security and makes troubleshooting easier. 
 
+IPv6 address space is actually 7.9x10 to the power of 28 times as many addresses as IPv4
 
 layer 3 header------------------------
 
@@ -348,17 +349,30 @@ There is one special address used in Class E, which is the broadcast address of 
 
 ----------------- PRIVATE ADDRESSES
 
+IETF, that's Internet Engineering Task Force, in RFC 1918. 
+Private IP addresses were originally for hosts that should not be connected to the Internet.
 There's also a range of reserved private addresses in each class.
 Those are valid to be assigned to hosts, these ones are not routable on the public Internet.
 So, these were originally designed for hosts in a closed private network that should have no Internet connectivity.
 
-CLASS  A - 10.0.0.0 to 10.255.255.255
-CLASS  B -  172.16.0.0 to 172.31.255.255
-CLASS  C - 192.168.0.0 to 192.168.255.255
+CLASS  A - 10.0.0.0 to 10.255.255.255      - subnetmask is /8
+CLASS  B -  172.16.0.0 to 172.31.255.255   - subnetmask is /12
+CLASS  C - 192.168.0.0 to 192.168.255.255  - subnetmask is /16
 
+
+if you're using a private IP address on the inside, whenever you communicate with anybody out on the public
+Internet, when the traffic gets to them, it looks like it's coming from a public IP address,so they're able to send the traffic back to you.
+And many hosts in the inside, so many hosts in the inside using those private IP addresses, can share a few or even just a single public IP address on the outside.
+
+you can not send traffic to a private IP address on the Internet. Because all the different companies are using those
+private IP addresses, the Internet would not know which one to send it to. Therefore, internal use within the organization only. 
 
 
 ============================= SUBNETING ============================================
+http://www.subnet-calculator.com/
+http://www1.subnettingquestions.com/
+https://subnetting.org/
+https://subnettingpractice.com/subnets.html
 
 ---------------- CIDR - Classless Inter-Domain Routing
 
@@ -431,7 +445,12 @@ further company growth).
 #  in the real world is you would also allocate address space for your loopback addresses. Loopback addresses are used for management. They're a logical address,
 so there's no anything physical on the other, so we'll usually allocate a /32 to our loopback addresses.
 # On network diagram put the network address IPs in every department and routers(devices) and next to the routers the first available host for the particular network address.
-
+# Summarization - We connect the two routers between Region A and Region B. And from Region A, we can advertise 10.0.0.0/16, and from Region B, originate,
+we advertise 10.1.0.0/16. So rather than advertising all 256 routes in both directions, we only advertise one route.
+So it takes up less memory on the routers because we've got less routes that are known to therouters, and also, 
+if there's a problem, the impact, there's a little call to that particular region. To be able
+to do this, you need to be careful with the way that you plan your network addressing, and you need to make
+sure that you allocate them in contiguous blocks like you see here. 
 
 ----------------- subnetting larger networks
 
@@ -442,8 +461,22 @@ Class A it is /8 with /28 gives 14 hosts and 1048576 (2^20  it is 20 cuz 28-8) s
 3rd octet
 Lets use the IP addr 60.15.10.75/19
 Class A it is /8 with /19 gives 8190 (2^13 -2) hosts and 2048 (2^11  it is 11 cuz 19-8) subnets
-network 
-broadcast
+The bondary between network and hosts is in the third octet just after 32 ( 128  |  64  |  <32> ||  16  |  8  |   4  |  2  |  1 ),
+this means the  network address goes up in multiple of 32.
+network 60.15.0.0, next network is 60.15.32.0
+broadcast 60.15.31.255
+hosts 60.15.0.1 to 60.15.31.254
+
+magic number method. It was a /19, that's 3 bits on the 3rd octet.
+So that is 128, 192, and then 224.
+We subtract 224 from 256, which gives us 32 so that we know the address block is going up in values of 32.
+
+
+134.65.0.0 into 6 different network 
+134 it is class B, so /16 default. network 2^3 = 8 meaning /19, it will provide 8 subnets and 2^13-2=8190 hosts
+network it will be 134.65.0.0, 134.65.32.0, 134.65.64.0
+
+
 
 =========================== OS on CISCO ==============================================
 
