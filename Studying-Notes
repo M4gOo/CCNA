@@ -219,6 +219,7 @@ checksum which is used to check that packet has not been corrupted in transit.
 =================== Layer 2 - DATA-LINK
 
 ethernet protocol
+ARP protocol
 MAC Address -  48-bit hexadecimal address. If we look back a slide, 6 Bytes, each Byte is 8 bits, so 6 times 8 = 48 bits
 MAC address is split into two different halves, as concerns what makes up the MAC address. The first half,
 so the first 24 bits, is the OUI. That's the Organizationally Unique Identifier, and that identifier is the manufacturer of the Ethernet port.
@@ -506,6 +507,53 @@ We subtract 224 from 256, which gives us 32 so that we know the address block is
 134 it is class B, so /16 default. network 2^3 = 8 meaning /19, it will provide 8 subnets and 2^13-2=8190 hosts
 network it will be 134.65.0.0, 134.65.32.0, 134.65.64.0
 
+
+=============================== DNS =====================================================
+
+layer 3, the sender has to put on the source and the destination IP address. Now with some applications, it will actually put the IP address directly in there, but quite often,
+it will use an FQDN, a Fully Qualified Domain Name, such as www.cisco.com, and that FQDN hasto be resolved to an IP address that we can put into the packet.
+So, that is where DNS comes in!!!!
+
+Enterprises will typically have an internal DNS Server or a cluster of internal DNS Servers, which will resolve the IP addresses of their internal hosts.
+if I was working for an enterprise called www.company.com, we would have our own internal DNS Server, which would be responsible for resolving all hosts that were in the www.company.com domain.
+However, that internal DNS Server, it can't know about everything on the entire Internet.
+It can't have the entire database there. So for anything external, it's going to need to forward those requests onto an external public DNS Server.
+DNS requests are sent using UDP port 53
+
+
+------------ configure DNS on cisco router
+you will not usually want a Cisco router to be a DNS server. Usually, you would use an external Windows, or Unix or Linux server to do that, but it is capable of doing it.
+
+The commands to configure a router to be a DNS Client. The reason you would do this is if you want the router itself to be able to resolve FQDNs.
+So often, we won't do that. Often, when we're working on a router, we're always going to be working with IP addresses.
+
+need to be in global conf level
+
+want it to be able to resolve hostnames, the commands to enter are ip domain-lookup
+to allow it to look up a DNS server ip name-server
+the IP address of your DNS server ip domain-name server.lab
+lookup additional DNS suffixes ip domain-list server.lab, and then those additional suffixes
+
+If you wanted a router to be your DNS Server,then to configure that, you would enter those same commands plus 
+ip dns server
+is the command that configure it as a DNS server, and then you would need to enter address records for everything that you want it to be able to resolve. 
+The command for that is 
+ip host namehost IPhost 
+and then the hostname and the IP address of that host.
+
+
+=============================  DNS  + layer2 (MAC)  ------   ARP Address Resolution Protocol  ======================================
+
+the sender can either send directly to an IP address or it can send to an FQDN. If it sends to that Fully Qualified Domain Name, then that will need to be resolved into the IP address using DNS.
+So we'll find the destination IP address, then when the packet gets down to Layer 2, the sender also needs to know the destination MAC address.
+So when it composes a packet, it needs to know both the destination IP address and the MAC address as well
+FQDN, which can be resolved by DNS. But the MAC address, on the other hand, is not a logical address.
+We need a protocol that's going to be able to figure out what the MAC address is automatically, and that's what ARP is 
+it will send out an ARP request, which is a Layer 2 broadcast.
+ARP replies are saved in a host ARP cache so that it doesn't need to send an ARP request every time it wants to communicate
+with somebody else. To view the ARP cache, we can do that 
+on Windows with the 'arp -a' command. clear cache netsh interface ip delete arpcache
+On a Linux host, we use the 'arp -n' command clear cache ip -s -s neigh flush all
 
 
 =========================== OS on CISCO ==============================================
