@@ -43,6 +43,8 @@ show running-config - that shows the entire running configuration on the router
 show ip interface brief - show all the interfaces available in the router, and the state of the interface, whether it's up or not, the IP address configured on the interface as well
 show(sh) run interface <fast0/0> 
 sh run | begin hostname  - when use pipe is case sensitive
+show mac address-table dynamic - view dynamic table mac add table in the switch
+clear mac address-table dynamic - clear dynamic table mac add table in the switch. Usually switch will periodically flush old entries
 
 
 
@@ -183,7 +185,9 @@ IP Address (source and destination)
 Other Layer 3 protocols apart from IP include ICMP, which is the Internet Control Message Protocol, which is used for ping.
 
 troubleshooting
-Routers devices
+Routers devices 
+they can direct traffic between your different IP subnets.
+Routers support many different types of interfaces such as Ethernet, Serial, ISDN, and ADSL
 
 The Network Layer is the layer that manages the connectivity of hosts by providing logical addressing. IP addressing is our logical addressing.
 
@@ -214,18 +218,44 @@ checksum which is used to check that packet has not been corrupted in transit.
 
 =================== Layer 2 - DATA-LINK
 
-MAC Address
+ethernet protocol
+MAC Address -  48-bit hexadecimal address. If we look back a slide, 6 Bytes, each Byte is 8 bits, so 6 times 8 = 48 bits
+MAC address is split into two different halves, as concerns what makes up the MAC address. The first half,
+so the first 24 bits, is the OUI. That's the Organizationally Unique Identifier, and that identifier is the manufacturer of the Ethernet port.
+The second half of the address, so the last 24 bits, that is assigned by the manufacturer. The burned in MAC address on every NIC port in the world is globally unique.
+no logical addressing with your MAC addresses. It's just one big flat address space
+
+to check mac address on cisco devices - show interface (on priv exec). it will show Hardware XXX, address <MAC ADDRESS NUMBER>
+
 Switches devices
+Switches will typically only support Ethernet interfaces.
+it is very common to have Layer 3 switches routing the traffic which is within the different subnets on your Local Area Network.
+However, if your connection outside that campus, out to the Wide Area Network, is using an interface type which is not Ethernet, then you would still require a normal traditional router for that traffic as well.
 The most important information is the source and destination Layer 2 address.
 it defines how data is formatted for transmission and how access to the physical media is controlled.
 It also typically includes error detection on correction to ensure a reliable delivery of the data.
 
 
+Whenever a frame is received, the switch will look at the source MAC address in the Layer 2 Ethernet header, and it will learn that MAC address
+Whenever a frame is received for the broadcast address or an unknown unicast address, it would be unknown because the switch hasn't learned about it yet, it will be flooded out all ports
+apart from the one it was received on. 
+
 =================== Layer 1 - PHYSICAL 
 
-Hubs devices
+ethernet protocol
+Hubs can't  send or receive at the same time withou collision
+Hubs devices it is half duplex, they dont have detecting and recovering from collisions which is CSMA/CD (Carrier-Sense Multiple Access with Collision Detection), this avoid colision. 
 it enables bit transmission, the 1s and 0s, between end devices. It defines specifications needed for activating, maintaining, and
 deactivating the physical link between end devices. For example, voltage levels, physical data rates, maximum transmission distances, and physical connectors, etc.
+
+
+the difference between the Categories (cat5, cat6,cat7,...) have got support for higher bandwidth connections.
+cat5 vs cat6 - cat is twisted thighter and have a plastic guid in the middle of the cable
+
+What is common using crossover cables is connecting your switches to each other, nowadays modern swtiches can use normal cables (just check if supports Auto MDI-X)
+
+RJ-45 Connector will plug directly into the switch. But fiber connectors, they'll normally go into a transceiver, which then goes into the switch.
+
 
 
 =================== TCP\IP STACK ===============================================
@@ -521,6 +551,9 @@ You'll often see that it comes in useful for troubleshooting as well using conso
 
 ========================= FIREWALL ============================
 
+The Cisco firewall is the ASA (Adaptive Security Appliance)
+The IPS, the Intrusion Prevention System, from Cisco is the SourceFire
+
 This is how stateful firewalls are able to keep track of connections as well.
 Imagine that rather than a switch in the middle there,
 if it was a firewall, and we had a rule in the firewall that said traffic is allowed out from the sender
@@ -534,6 +567,21 @@ so I'll allow this traffic to come through." If your traffic had been initiated 
 it would not allow that traffic. Okay, so that's how stateful firewalls work
 
 
+
+=================== DATA CENTER ==================================
+
+UCS stands for Unified Computing System, as well as the blade server that you see here. Cisco also have standard rackmount servers as well.
+With the UCS, Cisco moved into offering compute as well, where you can actually run your servers
+directly on Cisco hardware.
+The other main product that Cisco have for the Data Center market is the Nexus Switches.
+These are very similar to the standard Cisco Switches, which run the IOS software.
+They do exactly the same job, but these are often a bit higher-end switches, and they run the NX-OS software instead.
+
+
+=================== IP PBX ======================================
+
+A lot of modern companies still are using traditional PBXs, but IP PBXs are getting more and more popular.
+Cisco's Unified Communications Manager is one of the most popular IP PBXs 
 
 
 
