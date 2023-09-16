@@ -47,6 +47,12 @@ show mac address-table dynamic - view dynamic table mac add table in the switch
 clear mac address-table dynamic - clear dynamic table mac add table in the switch. Usually switch will periodically flush old entries
 
 
+### command for DNS and ARP
+(config)# ip domain-lookup
+(config)# ip name-server <domain IP>   
+# show arp
+# ping <domain name>
+
 
 ==========================  TROUBLESHOOTING
 
