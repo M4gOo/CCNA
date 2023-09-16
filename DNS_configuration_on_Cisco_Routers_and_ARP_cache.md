@@ -1,3 +1,4 @@
+### Useful commands 
 
 (config)# ip domain-lookup
 
