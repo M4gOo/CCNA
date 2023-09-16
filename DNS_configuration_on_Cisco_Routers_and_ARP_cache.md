@@ -11,13 +11,13 @@ ping <domain name>
 
 ![image](https://github.com/M4gOo/Python/assets/57456345/1fd9df3e-c675-4cd0-85df-e3865ec21902)
 
-The routers cannot be DNS servers in Packet Tracer (doesn't support the ip dns server), in this case I will use DNS-Server
+>>>>>  The routers cannot be DNS servers in Packet Tracer (doesn't support the ip dns server), in this case I will use DNS-Server  <<<<<
 
 
 10.10.10.10 - DNS Server
 
 
-1) Configure R1, R2 and R3 to use 10.10.10.10 as their DNS server.
+### 1) Configure R1, R2 and R3 to use 10.10.10.10 as their DNS server.
 
 --- R1
 
@@ -56,7 +56,7 @@ R3(config)#ip domain-lookup
 R3(config)#ip name-server 10.10.10.10
 
 
-2) Verify you can ping R2 and R3 from R1 using their hostnames
+###  2) Verify you can ping R2 and R3 from R1 using their hostnames
 
 R1(config)#exit
 
@@ -77,7 +77,7 @@ Sending 5, 100-byte ICMP Echos to 10.10.10.2, timeout is 2 seconds:
 Success rate is 100 percent (5/5), round-trip min/avg/max = 0/0/2 ms
 
 
-3) Check ARP cache
+### 3) Check ARP cache
 
 R1#show arp
 
@@ -112,7 +112,7 @@ Internet  10.10.20.1              -   0030.F2BA.30E7  ARPA   FastEthernet0/0
 Internet  10.10.20.2              5   0060.2FCA.ACA0  ARPA   FastEthernet0/0
 
 
-IMPORTANT!!!!
+>>>>>>>>>>>>   IMPORTANT!!!!
 
 R1 can reach R3 via R2 (this IP is included in the ARP cache). The DNS server is also in the same IP subnet as R1 so will appear in the ARP cache
 
