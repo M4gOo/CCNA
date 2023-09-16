@@ -1,8 +1,11 @@
 
 (config)# ip domain-lookup
+
 (config)# ip name-server <domain IP>   
-(#) show arp
-(#) ping <domain name>
+
+show arp
+
+ping <domain name>
 
 ###
 
@@ -10,7 +13,9 @@
 
 The routers cannot be DNS servers in Packet Tracer (doesn't support the ip dns server), in this case I will use DNS-Server
 
+
 10.10.10.10 - DNS Server
+
 
 1) Configure R1, R2 and R3 to use 10.10.10.10 as their DNS server.
 
