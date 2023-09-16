@@ -12,7 +12,7 @@ ping <domain name>
 
 ![image](https://github.com/M4gOo/Python/assets/57456345/1fd9df3e-c675-4cd0-85df-e3865ec21902)
 
->>>>>  The routers cannot be DNS servers in Packet Tracer (doesn't support the ip dns server), in this case I will use DNS-Server  <<<<<
+>>>>>  The routers cannot be DNS servers in Packet Tracer (doesn't support the ip dns server), in this case I will use DNS-Server  
 
 
 10.10.10.10 - DNS Server
