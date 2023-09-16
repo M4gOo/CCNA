@@ -1,8 +1,8 @@
 
 (config)# ip domain-lookup
 (config)# ip name-server <domain IP>   
-# show arp
-# ping <domain name>
+(#) show arp
+(#) ping <domain name>
 
 ###
 
@@ -16,36 +16,58 @@ The routers cannot be DNS servers in Packet Tracer (doesn't support the ip dns s
 
 --- R1
 R1>en 
+
 R1#conf t
+
 Enter configuration commands, one per line.  End with CNTL/Z.
+
 R1(config)#ip domain-lookup
+
 R1(config)#ip name-server 10.10.10.10   
 
 --- R2
+
 R2>en
+
 R2#conf t
+
 Enter configuration commands, one per line.  End with CNTL/Z.
+
 R2(config)#ip domain-lookup
+
 R2(config)#ip name-server 10.10.10.10
 
 --- R3
+
 R3>en
+
 R3#conf t
+
 Enter configuration commands, one per line.  End with CNTL/Z.
+
 R3(config)#ip domain-lookup
+
 R3(config)#ip name-server 10.10.10.10
 
 
 2) Verify you can ping R2 and R3 from R1 using their hostnames
 
 R1(config)#exit
+
 R1#
+
 %SYS-5-CONFIG_I: Configured from console by console
+
 R1#ping R2
+
 Translating "R2"...domain server (10.10.10.10)
+
 Type escape sequence to abort.
+
 Sending 5, 100-byte ICMP Echos to 10.10.10.2, timeout is 2 seconds:
+
 !!!!!
+
 Success rate is 100 percent (5/5), round-trip min/avg/max = 0/0/2 ms
 
 
