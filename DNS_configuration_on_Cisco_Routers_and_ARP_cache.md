@@ -20,6 +20,7 @@ The routers cannot be DNS servers in Packet Tracer (doesn't support the ip dns s
 1) Configure R1, R2 and R3 to use 10.10.10.10 as their DNS server.
 
 --- R1
+
 R1>en 
 
 R1#conf t
@@ -79,29 +80,44 @@ Success rate is 100 percent (5/5), round-trip min/avg/max = 0/0/2 ms
 3) Check ARP cache
 
 R1#show arp
+
 Protocol  Address          Age (min)  Hardware Addr   Type   Interface
+
 Internet  10.10.10.1              -   0090.0CD7.0D01  ARPA   FastEthernet0/0
+
 Internet  10.10.10.2              9   0004.9A96.A9A5  ARPA   FastEthernet0/0
+
 Internet  10.10.10.10             9   0090.21C6.D284  ARPA   FastEthernet0/0
 
 R2#show arp
+
 Protocol  Address          Age (min)  Hardware Addr   Type   Interface
+
 Internet  10.10.10.1              9   0090.0CD7.0D01  ARPA   FastEthernet0/0
+
 Internet  10.10.10.2              -   0004.9A96.A9A5  ARPA   FastEthernet0/0
+
 Internet  10.10.10.10             5   0090.21C6.D284  ARPA   FastEthernet0/0
+
 Internet  10.10.20.1              8   0030.F2BA.30E7  ARPA   FastEthernet1/0
+
 Internet  10.10.20.2              -   0060.2FCA.ACA0  ARPA   FastEthernet1/0
 
 R3#show arp
+
 Protocol  Address          Age (min)  Hardware Addr   Type   Interface
+
 Internet  10.10.20.1              -   0030.F2BA.30E7  ARPA   FastEthernet0/0
+
 Internet  10.10.20.2              5   0060.2FCA.ACA0  ARPA   FastEthernet0/0
 
 
 IMPORTANT!!!!
 
 R1 can reach R3 via R2 (this IP is included in the ARP cache). The DNS server is also in the same IP subnet as R1 so will appear in the ARP cache
+
 R2 is directly connected to both networks as shown on arp cache
+
 R3 is directly connect to R2 only, so it doesn't have any entries for the 10.10.10.0/24 network
 
 
