@@ -54,7 +54,16 @@ clear mac address-table dynamic - clear dynamic table mac add table in the switc
 # ping <domain name>
 
 
+### command to troubleshooting connectivity
+ping           - verifies two-way connectivity between a source and a destination. Troubleshooting layer 3 problem
+traceroute     - if a ping fails use the traceroute. A traceroute does a ping, hop by hop, from the source to the destination, and it will often indicate which router along the path has got the problem. Troubleshooting layer 3 problem
+telnet         -  is normally used for managing your network infrastructure devices (routers and switches). it can be used for is checking to see if a port is open on a destination. Troubleshooting layer 4 problem
+So from one router (R1), I'm going to telnet to 10.10.30.1 (DNS server), and I'm going to telnet to port 53, which is the DNS port, and this should tell me if DNS is running on R3 (10.10.30.1) or not.
+
+
+
 ==========================  TROUBLESHOOTING
+
 
 if a device just appears to be completely unresponsive, but it is powering on. So, that indicates that the device is probably failing to boot up.
 IP address on the device is not live until it has completed the bootup process.
@@ -62,7 +71,26 @@ IP address on the device is not live until it has completed the bootup process.
 
 When you do a debug command, what will happen is that the output will be updated in real time.
 
+
 Check TCP/IP is working use the command ping
+
+
+In an existing organization, you've already got existing routers and switches there, so rather than doing a new configuration from scratch, you'll do it based on a template.
+there's a problem, you think it's on a particular router, you can compare it with another router which should have a similar configuration and look for any differences there.
+By comparing it with a known good configuration, this can help you find the problem more quickly
+
+If you think that you have narrowed the problem down to a particular device, but you can't see a configuration error on there, a way you can confirm it is by swapping out with some known good hardware.
+For example, a really simple one would be a cable.
+
+The best way to troubleshoot connectivity problems and tracing the path is start off at the source and work your way towards the destination.
+
+First thing to do, real world, whenever a user reports a problem is don't believe them. Check it first!!!!
+ping the DNS using the hostname on one of the routers If it says unrecognized host or address, or protocol not running, so we do have an issue.
+Then try to ping using the IP address.  If it is unreachable, we got some kind of connectivity issue between the routers
+Use the command trouceroute. it does a ping, but it sends the ping with a Time To Live (TTL) value of 1, and then 2, and then 3, and then so on. If doesn't show connectivity with one oof the routers,
+check if there is a interface connect/up in that router.
+Check Telnet. So from one router (R1), I'm going to telnet to 10.10.30.1 (DNS server), and I'm going to telnet to port 53, which is the DNS port, and this should tell me if DNS is running on R3 (10.10.30.1) or not.
+
 
 ========================= BACKUP CONFIGURATION =========================
 
