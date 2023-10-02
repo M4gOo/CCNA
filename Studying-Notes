@@ -45,6 +45,8 @@ show(sh) run interface <fast0/0>
 sh run | begin hostname  - when use pipe is case sensitive
 show mac address-table dynamic - view dynamic table mac add table in the switch
 clear mac address-table dynamic - clear dynamic table mac add table in the switch. Usually switch will periodically flush old entries
+(config) interface f0/0 THEN (config-if) no shutdown -> you need to choose the interface THEN no shutdown (this makes the interface administratively down to STATUS UP)
+
 
 
 ### command for DNS and ARP
@@ -52,6 +54,10 @@ clear mac address-table dynamic - clear dynamic table mac add table in the switc
 (config)# ip name-server <domain IP>   
 # show arp
 # ping <domain name>
+
+removing incorrect entry for DNS
+(config) no ip name-server <IP_wrong>
+(config) ip name-server <IP_correct>
 
 
 ### command to troubleshooting connectivity
@@ -61,6 +67,10 @@ telnet         -  is normally used for managing your network infrastructure devi
 So from one router (R1), I'm going to telnet to 10.10.30.1 (DNS server), and I'm going to telnet to port 53, which is the DNS port, and this should tell me if DNS is running on R3 (10.10.30.1) or not.
 
 
+'remote host not responding' -> connectivity issue
+this when you ping an IP, it is good to use traceroute IP
+
+
 
 ==========================  TROUBLESHOOTING
 
@@ -68,9 +78,16 @@ So from one router (R1), I'm going to telnet to 10.10.30.1 (DNS server), and I'm
 if a device just appears to be completely unresponsive, but it is powering on. So, that indicates that the device is probably failing to boot up.
 IP address on the device is not live until it has completed the bootup process.
 
+The first questions.
+It was working before
+Something changed which could cause the problem
+Tre problem affect everybody or particular user (if particular user, problably the problem is at their end)
+
 
 When you do a debug command, what will happen is that the output will be updated in real time.
 
+
+test DNS - ping R1
 
 Check TCP/IP is working use the command ping
 
