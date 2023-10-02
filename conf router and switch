@@ -27,3 +27,20 @@ Once you've got IP addresses on your router, you'll be able to connect to those 
 
 A Layer 2 switch is not IP routing aware.
 It does, however, support a single IP address which is used for management. So, you can't put multiple IP addresses on a Layer 2 switch.
+so we can again Telnet or Secure Shell (SSH) to the switch remotely to manage it.
+Unlike on a router, where we configure the IP address on an interface, on a switch, a Layer 2 switch, the management IP address goes on a VLAN interface which is a virtual interface.
+So when we configure our VLAN interface, that's called an SVI, Switched Virtual Interface, and this is going to be in VLAN 1.
+switch also needs to be able to get out to that subnet. So just like a normal host would need, it's also going to need to have a default gateway
+
+(conf) interface vlan 1, t
+ip address 192.168.0.10 255.255.255.0
+no shutdown                                 On a switch, interfaces are enabled by default, but I like to do anyways.
+(conf) ip default-gateway 192.168.0.1
+
+configure descriptions on our interfaces
+SW(config) interface fastEthernet 0/1
+(config-if) description Link to R1      ->helps to troubleshooting, this will tells the interface is connect to R1
+
+We actually need to do some additional commands as well to allow Telnet and/or SSH access into the switch.
+
+
