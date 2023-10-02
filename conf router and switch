@@ -61,7 +61,11 @@ If you're not sure how to do it on the server, maybe you would just leave it on 
 That would be a big mistake.
 You either have to set it to manual on both sides or auto on both sides.
 If you set it to manual on one side and auto on the other, then that will often cause speed and duplex issues, which can bring the link down or lead to terrible performance on the link. 
- if both sides are set to auto, and it doesn't manage to negotiate correctly, that can cause an incorrect speed setting where it's going to run below the optimal speed.
+If both sides are set to auto, and it doesn't manage to negotiate correctly, that can cause an incorrect speed setting where it's going to run below the optimal speed.
+
+If you've got a speed mismatch where you've manually configured the speed on both sides of the link, that will typically bring the interface down.
+If you've got a duplex mismatch, then the interface will typically stay up, but you'll get terrible performance
+
 
 Switch(config) interface fastEthernet 0/1
 (config-if) duplex full
