@@ -116,6 +116,24 @@ check if there is a interface connect/up in that router.
 Check Telnet. So from one router (R1), I'm going to telnet to 10.10.30.1 (DNS server), and I'm going to telnet to port 53, which is the DNS port, and this should tell me if DNS is running on R3 (10.10.30.1) or not.
 
 
+---------------- troubleshooting layer 1
+at Layer 1, useful command is 'show ip interface brief'.
+When you do that, it will show you the status of the interface. If it shows 'administratively down',
+that means you haven't entered the no shutdown command. 
+So, do that to bring the interface up. 
+
+If it shows 'down/down',
+that means that the administrator has done a no shutdown on the interface, but there's a Layer 1 issue.
+So, check that it is cabled in at both ends and the device on the other side is powered on.
+If the device on the other side is powered off, or if you don't have a cable securely connected on both sides,
+the interface will show as "down/down." 
+
+The last setting you can have there for the status in a show ip interface brief is "up/down." 
+That typically indicates a Layer 2 issue or a speed mismatch. So, in this case, check if the interface configuration is the same on both sides of the link.
+A common issue would be if you've got different VLAN settings on both sides of the link.
+
+
+
 ========================= BACKUP CONFIGURATION =========================
 
 copy run start - Router# - being copied to the startup configuration, so change made in starup-config it will persistent.
