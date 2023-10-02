@@ -44,3 +44,38 @@ SW(config) interface fastEthernet 0/1
 We actually need to do some additional commands as well to allow Telnet and/or SSH access into the switch.
 
 
+
+===============   interface speed and duplex for ROUTER and SWITCH ======================
+
+a link should auto-negotiate to full duplex and the fastest available speed. It should do that automatically
+The default is auto on Cisco devices
+
+Best practice is to manually set the speed and duplex on ports which are connected to another network infrastructure device (router, a switch, or a firewall, or a server)
+Because if you set it manually, that is just a little bit more reliable
+
+It's very important to set matching speed and duplex settings on both sides of the link
+leave both sides set as auto or set both sides manually
+
+For example, if you've got a server plugged into the switch, you could go on to the switch, and you could manually set the speed and duplex on there.
+If you're not sure how to do it on the server, maybe you would just leave it on the server to auto.
+That would be a big mistake.
+You either have to set it to manual on both sides or auto on both sides.
+If you set it to manual on one side and auto on the other, then that will often cause speed and duplex issues, which can bring the link down or lead to terrible performance on the link. 
+
+Switch(config) interface fastEthernet 0/1
+(config-if) duplex full
+(config-if) speed 100
+
+Router(config) interface fastEthernet 0/0   or int fast0/0
+(config-if) duplex full
+(config-if) speed 100
+
+
+--------- verify that everything is working as expected
+sw1# show running-config   or show run      -> check entire ocnfiguration of the device
+show ip interface brief                      -> shows you the status of your interfaces and which IP address is configured on which interface.
+show run interface vlan 1                    -> shows specific interface
+show interface vlan 1                      -> shows mac addr, packets and so on
+show version                                -> can check how many memory is installed into device
+
+
