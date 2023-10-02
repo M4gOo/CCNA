@@ -1,0 +1,29 @@
+
+
+------------------- CONFIGURE ROUTER ------------------------------
+
+Your routers provide connectivity between your different IP subnets. That's their main job.
+
+The routers need to have interfaces in the different subnets, and they need to have IP addresses on those interfaces.
+Those IP addresses will act as the default gateway address for any hosts that are in that subnet.
+
+to do this from global configuration mode,
+we then go to interface configuration mode.
+So the command is 'interface FastEthernet0/0', then to put the IP address on there, 
+interface fast0/0
+ip address 192.168.0.1 255.255.255.0
+no shutdown                  On our routers, interfaces are shutdown by default, you need to type NO SHUTDOWN
+
+  
+The IP address and the subnet mask are both entered with one command, and you have to enter the subnet mask infull dotted decimal notation.
+
+After we have configured this, the router is going to be able to route traffic between those two networks.
+As well as being able to route traffic, it also gives IP connectivity to the router itself.
+So after we've done this, we would be able to open up a Telnet or SSH client, like Putty, and connect to the router to manage it.  
+Once you've got IP addresses on your router, you'll be able to connect to those IP addresses to manage the router remotely from wherever you are.
+
+
+------------------- CONFIGURE ROUTER ------------------------------
+
+A Layer 2 switch is not IP routing aware.
+It does, however, support a single IP address which is used for management. So, you can't put multiple IP addresses on a Layer 2 switch.
