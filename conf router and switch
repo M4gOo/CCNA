@@ -66,6 +66,7 @@ If both sides are set to auto, and it doesn't manage to negotiate correctly, tha
 If you've got a speed mismatch where you've manually configured the speed on both sides of the link, that will typically bring the interface down.
 If you've got a duplex mismatch, then the interface will typically stay up, but you'll get terrible performance
 
+If you do have a duplex mismatch, then CDP, Cisco Discovery Protocol, should detect that.
 
 Switch(config) interface fastEthernet 0/1
 (config-if) duplex full
