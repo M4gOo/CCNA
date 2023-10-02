@@ -1,0 +1,58 @@
+
+
+===================== CDP ==================================
+
+Cisco Discovery Protocol (CDP) and Link Layer Discovery Protocol (LLDP)
+They're both very similar protocols.
+
+CDP, Cisco Discovery Protocol, is a Cisco proprietary Layer 2 protocol, and it is used to share information
+with other directly connected Cisco equipment, such as the operating system and the IP address.
+That information will be shared between connected devices. That aids in troubleshooting by allowing administrators
+to map out how Cisco devices are connected to each other.
+
+CDP is enabled by default on most Cisco equipment. Not just on routers and switches, also on the firewalls, and even things like software,
+like Cisco Unified Communications Manager (UCM) which is used to control IP phones, and even the IP phones as well will run CDP.
+
+CDP works at Layer 2, so it's not necessary for the device to have an IP address on it for it to be detected by its neighbors.
+
+if you want to disable it, 
+'no cdp run'
+To turn it back on again it's 
+'cdp run'
+
+That's done at global configuration. A reason you would maybe want to disable CDP is it can be seen as a security concern.
+(config-if) no cdp enable   -> this is for a interface,  will now stop sending out CDP information on that particular interface
+(config) no cdp enable      -> If I'm in a highly secured environment and I just want to completely disable CDP on the switch
+
+# show cdp
+# show cdp neighbors
+# show cdp neighbors detail
+
+you've got a switch on the edge of your network, and you want CDP to be enabled on the internal facing interfaces. 
+You want to disable it on the external facing interface so you don't give up information to another organization.
+you can do a no cdp enable at the interface level
+
+========================== LLDP ====================================
+
+LLDP is an open standard. So, it's supported on most vendors' devices, and it provides similar information to CDP.
+
+LLDP is only supported on physical interfaces.
+
+CDP is also supported on virtual sub-interfaces as well.
+
+With LLDP, it can only discover up to one device per port. CDP is able to discover multiple devices
+per physical port because it does support those virtual sub-interfaces. 
+
+LLDP can discover Linux servers, CDP cannot.
+
+(config) lldp run
+(config) no lldp run
+(config-if) no lldp transmit
+(config-if) no lldp receive
+# show lldp
+# show lldp neighbors
+# show lldp neighbors detail
+
+
+
+
