@@ -32,6 +32,8 @@ you've got a switch on the edge of your network, and you want CDP to be enabled 
 You want to disable it on the external facing interface so you don't give up information to another organization.
 you can do a no cdp enable at the interface level
 
+If you do have a duplex mismatch, then CDP, Cisco Discovery Protocol, should detect that
+
 ========================== LLDP ====================================
 
 LLDP is an open standard. So, it's supported on most vendors' devices, and it provides similar information to CDP.
