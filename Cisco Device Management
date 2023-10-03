@@ -45,6 +45,65 @@ Then, you can save it to an external TFTP server instead and boot from there.
 
 
 
+-------------------factory reset and password recovery
+
+factory reset 
+
+the enable prompt (#), we use the 
+'write erase' command
+That will erase the startup-config. You do that, you then reload the device, and it will boot up with a blank configuration.
+There is no startup-config, so the Setup Wizard will then run.
+
+
+configuration register. 
+That is used to change the way that the router boots from the default.
+You can use the 
+'config-register' command in global configuration mode, or if you're at the ROMMON prompt to where the router or a switch hasn't completed booting yet, 
+'confreg' command.
+
+For example, we could use 'config-register 0x2142' for that setting at global config or 'confreg 0x2142' if we were at the ROMMON prompt.
+three most useful.
+First is 0x2102. That should be the default. The device will boot normally when that is the setting. 
+Next one is 0x2120, will boot into ROMMON mode.
+Lastly, 0x2142 will ignore the contents of NVRAM while booting, so it will ignore the startup-config.
+
+
+-----------------password recovery  --google
+
+Always google the steps , because you do once in a while
+
+whatever kind of device is that you need to recover, it will be very, very similar to those instructions below
+
+You need to reboot it.
+Then while it is rebooting, press the break sequence on the keyboard. That is commonly Ctrl + Break
+during the first minute that the device is powering on, and that will break you into the ROMMON prompt. You then enter the command 
+'confreg 0x2142' at the ROMMON prompt, which says to ignore the startup-config on boot
+The startup-config is still there, and the full configuration, everything that was configured on that device is there as well
+but the router is not going to use that startup-config when it boots up, so you don't need to know what the enable secret is. 
+You then enter 'reset' at the ROMMON prompt to boot the device. The router
+will boot up with no configuration, so it will enter the Setup Wizard. You then type 'no' to bypass that.
+You then enter enable mode with the 'enable' command.
+Next thing you need to do is copy the startup-config to the running-config. Do not forget that step. If you forget that step and you do everything else correctly you're going to end up factory resetting that device
+then enter a new enable secret in global configuration mode to overwrite the old one, and that will go into the current running-config. 
+Then enter 'config-register 0x2102', so the router will boot normally on the next restart.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
