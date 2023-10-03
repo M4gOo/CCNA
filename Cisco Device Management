@@ -1,0 +1,33 @@
+
+
+different memory locations on your device.
+
+There's four built-in memory locations.
+
+First ROM, the Read Only Memory.
+Flash. On older devices, that will be installed in the cache on the motherboard. On newer devices, it's a removable CompactFlash card.
+NVRAM, the Non-Volatile RAM
+RAM the normal Random Access Memory.
+You can also use an external USB memory stick plugged into the device as well.
+
+ROM has got two main functions,
+First is the Power On Self Test. The POST test will check for any problems with the hardware.
+It will then load the bootstrap, and the bootsrap will look in Flash for an IOS software image to load next.
+get instructions, just search in Google for 'Cisco ROMMON Recovery' in case is not boot up and to recover the device
+
+
+To make sure that you get the newer image, the command to use is
+'boot system'
+'flash' 
+and then the system image name. That's a global configuration command. 
+
+
+When the system has finished loading the IOS system image from Flash, it will then load the start- up config, configuration file from NVRAM, 
+and the saved start-up config then becomes the current running-config in RAM.
+
+
+Whenever you enter a command in IOS, it takes effect immediately and goes into the running-config in RAM. To make your changes permanent across a reboot,
+'copy running-config start-up config' command
+that copy it into NVRAM, which will be used the next time the system boots up.
+
+
