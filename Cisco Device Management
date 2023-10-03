@@ -31,3 +31,20 @@ Whenever you enter a command in IOS, it takes effect immediately and goes into t
 that copy it into NVRAM, which will be used the next time the system boots up.
 
 
+VLAN database
+That file is the 'vlan.dat' file.
+It's just on a switch where it saves the VLAN information, and that is saved in either Flash or NVRAM, depending on the model of the switch.
+
+
+TFTP server
+load a system image and/or startup-config from an external TFTP server rather than from Flash or NVRAM.
+That is not recommended, though, because the device will not be able to boot if it loses connectivity to that TFTP server
+So, the only reason you would ever really do that is if you want to load a new version of the system
+image and there's not enough Flash memory capacity on your device to store that.
+Then, you can save it to an external TFTP server instead and boot from there. 
+
+
+
+
+
+
