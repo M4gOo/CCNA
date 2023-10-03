@@ -95,13 +95,32 @@ So, that could be a security concern. If you've enabled both 'enable secret' and
 
 
 
+==================   backing up the IOS system image and your config file on your router or switch  =======================
+
+You can back up either to an external FTP, or TFTP server, or to a USB stick, or you can back up to Flash in the device.
+copy flash tftp
+copy running-config tftp
+copy running-config usb 
+
+If you do want to restore an old version of the configuration file, you can't just copy it into the startup or running-config because if you do that, it will be merged.
+It's not going to replace it
+the way that you do that is you, first off, factory reset the device.
+You then copy that old config into the startup-config and then reboot, and then you're back with that old config.
 
 
 
+========================  upgrade the IOS system image on your Cisco router or switch ============================
 
+First thing that you need to do is get the new software image, so you get that from the Cisco Website
+https://software.cisco.com.
 
-
-
+download it from the Cisco website, and then copy it onto your TFTP server.
+copy tftp flash
+Then from the TFTP server, you're going to download it to Flash on the device.
+Once you've got it on Flash, then either delete the old image, leaving just the new one there and the device
+will now boot up from the new image, or if you want to keep both images on there just in case you need
+to fall back to the old one, then to make sure that it uses the new image
+use the 'boot system' command.
 
 
 
