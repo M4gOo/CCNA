@@ -88,6 +88,11 @@ then enter a new enable secret in global configuration mode to overwrite the old
 Then enter 'config-register 0x2102', so the router will boot normally on the next restart.
 
 
+'enable password' is really a legacy command,
+'enable secret' is the new form of doing it.
+When you do look at the running-config, 'enable password' is unencrypted by default. 'enabled secret' is always in an encrypted form.
+So, that could be a security concern. If you've enabled both 'enable secret' and the 'enable password', then the 'enable secret' overrides the 'enable password'.
+
 
 
 
