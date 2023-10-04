@@ -1,3 +1,31 @@
 
 
-sdfasd
+A router has got two main functions
+that's to determine the best path to available networks, and then to forward actual production traffic to those networks.
+
+The best available path or paths to a destination network are listed in a router's routing table andwill be used for forwarding traffic.
+A router may learn lots of different routes, but the best routes into the routing table will be used.
+
+-----------Routing Table
+It consists of directly connected networks and routes configured statically by the administrator or dynamically
+learned through a routing protocol.
+when you do configure the IP addresses on the router's interfaces, it will automatically add routes corresponding
+to those into the routing table.
+The command to view the routing table on a router is 
+'show ip route'
+
+To find out the IP address on the interface, we'd have to
+do a 'show ip interface brief' or another similar command to find out that information. 
+The show ip route command only shows the subnets available
+
+as soon as you've configured IP addresses on your router interfaces, it can automatically route traffic between those directly connected networks.
+
+
+Another type of route that is going to show up in your routing table after you've configured IP addresses
+on your interfaces is local routes.
+these are only going to show up from IOS version 15. Earlier versions did not show these. Local routes always have a /32 subnet mask
+From IOS 15, it tells you the subnets that are available on each interface, and
+it also tells you the actual IP address that is configured on the interface as well.
+
+
+
