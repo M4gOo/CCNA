@@ -28,4 +28,69 @@ From IOS 15, it tells you the subnets that are available on each interface, and
 it also tells you the actual IP address that is configured on the interface as well.
 
 
+===================  static routing ================================
+
+if a router wants to send traffic to a subnet that it's not directly connected to, then it's
+going to need some way to know how to get there.
+So you need to get that route into the routing table.
+You can either do it manually as an administrator by adding a static route, or the router can learn it
+dynamically through a routing protocol.
+
+ip route 10.1.0.0 255.255.255.0 10.0.0.2
+The command that I need to add is 'ip route 10.1.0.0 255.255.255.0',
+so the subnet I need to get to including its subnet mask.
+Then, I say the next hop IP address that I need to send traffic to in order to get there.
+So for R1, to send traffic to the 10.1.0.0 network, it needs to send it out of its fastEthernet0/0
+interface and send it to 10.0.0.2 on router R2, so I add the route for that.
+
+another case
+When I add the target for the route, it has to be reachable on a directly connected interface. So R3,
+to get to R1, it sends a traffic via R2 which it is directly connected to. 
+
+
+=====================  summarization and the default route ===========================
+
+we don't need to enter routes for its directly connected networks.They were automatically put into the routing table when we configured our IP addresses.
+we do need to configure routes for anywhere that the router is not directly attached to.
+
+it is possible to summarize that into one route
+For static routing, summary routes lessen the administrative overhead because if you've got
+less routes to configure, that lessens the workload on you.
+It also lessens the memory usage on the routers. The last routes that are in the routing table, the
+last memory it's going to take up.
+
+So rather than having separate routes for 10.1.0.0, 10.1.1.0, and 10.1.2.0, which
+are all of a /24, I've configured one route for 10.1.0.0 with a subnet mask of 255.255.0.0.
+I summarized at the classful boundary for a class B address, which is going to
+cover our routes all the way from 10.1.0.0 to 10.1.255.0, which is a pretty big range.
+
+Maybe we don't want to have all of those subnets available behind R2
+So rather than saying ip route 10.1.0.0 and then to 255.255.0.0, 
+lets use route 10.1.0.0, and then subnet mask of 255.255.252.0, and again pointing at
+R2 at 10.0.0.2. 
+
+
+------------- Longest Prefix Match
+
+the router going to take? It takes the one with the longest prefix.
+The second route is got a prefix of 255.255.255.0.
+The first route is got 255.255.0.0. 
+So the second route is a longest prefix.
+
+---------
+what if you've got multiple routes for the exact same destination? Meaning, it has the same destination
+IP address and the same prefix as well?
+In that case, the router will load balance the traffic over those routes.
+
+-------- default gateway
+the Internet side, it's 203.0.113.2 at
+our service provider. So to add a route going out to everywhere else that we haven't specifically
+had a route for elsewhere, it is '0.0.0.0 0.0.0.0' so
+our full command is 'ip route 0.0.0.0 0.0.0.0' going to the next hop at our service
+provider of 203.0.113.2.
+default route is a catch-all for any traffic that does not match one of our more specific routes.
+
+
+
+
 
