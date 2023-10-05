@@ -78,6 +78,12 @@ So if you think there's maybe an issue with an interface, this is a useful comma
 It also will verify if traffic is passing throughthe interface or not as well.
 
 
+DEBUG xxxx SHOW COMMAND
+
+Debugs are similar to show commands but where a show command gives you a point in time snapshot
+information, debug information gets updated in real time.
+
+
 
 ==========================  TROUBLESHOOTING
 
