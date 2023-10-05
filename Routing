@@ -183,7 +183,7 @@ do put a bit more load on the router because it's got more information there.
 
 IGPs are: RIP, the Routing Information Protocol; 
 EIGRP the Enhanced Interior Gateway Protocol - a Cisco proprietary Distance Vector routing;
-OSPF, which is Open Shortest Path First; 
+OSPF, which is Open Shortest Path First - it's the most commonly deployed IGP today;
 ISIS, which is Intermediate System to Intermediate System.
 
 
@@ -200,6 +200,91 @@ so there isn't really any need to use more than one of them. Actually using more
 a bad idea. But does sometimes happen though, usually because of a merger or maybe just historical reasons
 If that does happen, then information can be redistributed between the different routing protocols.
 But because they work in different ways internally, this can get a bit messy.
+
+
+
+===================  routing protocol metrics =======================================
+
+A router may receive multiple possible paths to get to a destination network because it might have multiple
+different ways it can get to that network.
+It might have multiple neighboring routers with paths available through all of them.
+Only the best path,
+however, out of all the ones that the router knows about is going to make into the routing table and be used. 
+So the different Interior Gateway Protocols (IGPs) needs some way of determining which is the best path,
+and they all use different methods to calculate that. Each possible path will be assigned a metric
+value by the routing protocol which indicates how preferred the path is, and the lowest metric value is preferred.
+
+So high numbers are bad, lower numbers are better. Use an analogy with cost, cost lower is better
+
+
+RIP always uses hop count as the metric. A hop is meaning it goes through another router.
+The maximum hop count by default in RIP is 15.
+The paths which are more than 15 hops away are marked as unreachable by default, a scalability limitation with RIP.
+use the shortest hop count even if those links are low bandwidth links, which would really not be the best path.
+RIP is not normally used in production networks. Only in really small networks or in test environments.
+
+
+OSPF does take bandwidth into account.
+It uses cost as the metric which is automatically derived from interface bandwidth by default.
+You can also manually configure the cost of the links if you want to manipulate the path that OSPF is typically
+going to take the best path anyway.
+
+
+IS-IS
+also uses cost as the metric, but unlike with OSPF, it's not automatically derived from the interface bandwidth.
+All links have got an equal cost by default.
+if you want to force a particular path to be used in IS-IS based on which path has got the best bandwidth,
+you're going to have to manually you configure that.
+It's not going to do it automatically like OSPF does.
+If you don't manually set the link costs in IS-IS, the lowest hop count will be used.
+IS-IS links need to be manually configured, or it will use hop count to determine the best path which is not usually what we want to happen
+It's typically only used in service provider networks or large organizations with their own MPLS
+network who choose it because of its scalability.
+
+
+EIGRP and it uses the bandwidth and delay of the links to calculate the metric.
+Load and reliability can also be configured, but they're ignored by default.
+So bandwidth is used the same as it was with OSPF, we also have dealy as well.
+But the way the EIGRP works, it's not like it's sending probes over the links to measure what the delay is.
+It uses a fixed delay which is based on what the bandwidth is. So basically, it's based on the bandwidth
+You can manually configure the delay on links if you want to manipulate the path.
+
+
+with OSPF and EIGRP, because it is going to use the best bandwidth links anyway, typically, it's going to
+choose the path that you would want it to.
+But if for some reason it's not, you can override that with manual configuration
+
+
+===================  Equal Cost Multi Path (ECMP) =====================================
+
+If multiple paths to a destination network
+have an equal metric, the router will enter all of those paths into the routing table,
+and it will load balance the outbound traffic to that destination network over those available multiple
+equal cost paths. And all routing protocols, all your IGPs, will perform Equal Cost Multi Path by default.
+
+EIGRP is the only routing protocol that can do Unequal Cost Multi Path.
+So they'll all do Equal Cost Multi Path by default including EIGRP, 
+EIGRP will not do Unequal Cost to load balancing by default, but it can do it if you manually configure it to do so. 
+
+
+=================  administrative distance ======================================
+
+Administrative Distance (AD) is used along with the metric to decide which of the available paths is going to make into the routing table.
+A router will typically only learn routes to a particular destination from a single routing protocol.
+
+if for some reason your organization is running multiple routing protocols and a router receives routes to the
+same destination from those different routing protocols, then it can't compare their metrics to each other.
+For example, a RIP hop count of 5 can't be compared to an OSPF cost of 60.
+
+the router needs to use a different method to choose when routes to the same destination are received from different
+routing protocols, and that's what we use the Administrative Distance for. 
+
+
+
+
+
+
+
 
 
 
