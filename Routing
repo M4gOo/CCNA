@@ -133,5 +133,85 @@ backup route or for a static route to the internet.
 
 
 
+================== Routing Protocols =====================================
+
+outing protocols can be split into two main types, thats our IGPs, which are our Interior Gateway Protocols and EGP, which is an
+Exterior Gateway Protocol.
+
+Interior Gateway Protocols (IGP) are used for routing within an organization.
+Exterior Gateway Protocol (EGP) is used for routing between organizations over the Internet.
+
+the only EGP that is in use today is BGP, the Border Gateway Protocol.
+
+IGPs can be split into two main types, either
+Distance Vector routing protocols or Link State routing protocols. 
+
+
+---------- Distance Vector protocols 
+
+each router sends its directly connected neighbours a list of all its known networks, along with its own distance to each of those networks.
+Distance Vector routing protocols do not advertise the entire network topology. 
+A router only knows its directly connected neighbours and the list of networks those neighbours have advertised.
+because of this, Distance Vector routing protocols are often called as routing by rumuor.
+
+
+---------  Link State routing protocols
+
+In Link State routing protocols, each router describes itself and its interfaces to its directly connected neighbors.
+That information is then passed unchanged from one router to another.
+Every router thus learns the full picture of a network, including every router, its interfaces, and what they connect to.
+
+
+----------- similar DV and LS
+
+Distance Vector and our Link State routing protocols,
+both of them only form an adjacency with directly connected neighbors.
+
+----------- difference DV and LS
+
+The difference is that with Distance Vector routing protocols, those updates are from the point of view of the neighbor.
+The neighbor says, "I know about these networks and this is what my distance is to each of those." With
+Link State routing protocols, the routers still talk to their neighbors
+that they say, "Hey, these are all of the routers and their links that are in the network." And the information
+passes along unchanged.
+
+
+Link State routing protocols, the routers have a full picture of the topology and they have a reputation
+of being able to make better routing decisions because of this. But Link State routing protocols
+do put a bit more load on the router because it's got more information there.
+
+
+IGPs are: RIP, the Routing Information Protocol; 
+EIGRP the Enhanced Interior Gateway Protocol - a Cisco proprietary Distance Vector routing;
+OSPF, which is Open Shortest Path First; 
+ISIS, which is Intermediate System to Intermediate System.
+
+
+RIP and EIGRP are Distance Vector routing protocols
+OSPF and ISIS are Link State routing protocols
+
+
+our IGPs, they all do the same job which is to advertise routes
+within an organization and determine the best path or paths to the different networks.
+
+
+an organization will typically pick one of the IGPs. They all do the same job,
+so there isn't really any need to use more than one of them. Actually using more than one of them is
+a bad idea. But does sometimes happen though, usually because of a merger or maybe just historical reasons
+If that does happen, then information can be redistributed between the different routing protocols.
+But because they work in different ways internally, this can get a bit messy.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
