@@ -314,6 +314,22 @@ go down, OSPF will detect that and the route will be removed from the routing ta
 ========================   Loopback Interfaces  ==============================
 
 
+loopback interface is a logical interface, and it allows you to assign an IP address to a router or a Layer 3 switch
+Loopbacks are logical, so it's impossible for them to physically be in the same subnet as other devices. So, they're
+usually assigned /32 subnet masks to avoid wasting IP addresses.
+
+use a loopback. So that way, we get a single IP address that we can use to connect to R1
+even if one of those paths goes down.
+what we do is we add interface Loopback 0, and we give it IP address, in our example, 192.168.1.1/32.
+You can use any IP address you want for the loopback, and we then advertise that in the routing protocol.
+R4 will then learn the two paths that it can use to get to 192.168.1.1,
+and it will use whichever one is got the lowest cost or both
+if they've got equal costs. And R4 can still connect to 192.168.1.1 even
+if either path goes down. this is useful for management, and it's really critical for other things, like BGP and IP telephony
+
+
+
+==================  Adjacencies and Passive Interfaces =====================
 
 
 
