@@ -280,13 +280,38 @@ the router needs to use a different method to choose when routes to the same des
 routing protocols, and that's what we use the Administrative Distance for. 
 
 
+The Administrative Distance is a measure of how trusted a particular routing protocol is.
+If routes to the same destination are received via different routing protocols, the protocol with the
+best, which is the lowest, Administrative Distance value wins. With AD the lowest number is best.
+
+So worst is RIP, with a value of 120.
+IS-IS at 115
+OSPF has an AD of 110
+EIGRP is the most preferred of our IGPs it's got an AD of 90. 
+External BGP has 20
+a Static Route has a default AD of 1
+Connected Interfaces will always be preferred, they have an Administrative Distance of 0. 
+
+The Administrative Distance is considered first to narrow the choice down to the single best routing protocol, and then
+the metric is considered to choose the best path or paths, which will make it into the routing table.
+
+'show ip route'
+will show us what routes did make it into the routing table
+in sqaure brackets [120/2] means AD of 120. The second value is the metric 2 hops
+
+
+----------  Floating Static routes
+we want to configure a backup static route 
+it would go through R5 as a first choice. So the command we enter is 'ip route 10.0.1.0 255.255.255.0 10.1.3.2', 
+selecting R5 as the next hop, and then we put in an extra keyword at the end here, we say '115'. That sets and AD of 115, which
+is higher than the OSPF AD of 110, so this will be used as a backup route
+
+if you do a Floating Static route as a backup for OSPF, if any of the links from R4 to R1
+go down, OSPF will detect that and the route will be removed from the routing table. So, that will work just fine
 
 
 
-
-
-
-
+========================   Loopback Interfaces  ==============================
 
 
 
