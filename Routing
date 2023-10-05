@@ -92,5 +92,46 @@ default route is a catch-all for any traffic that does not match one of our more
 
 
 
+========================  dynamic routing protocols comnparing with static protocol ===============================
+
+
+When a routing protocol is used, routers will automatically advertise their best paths to
+known networks to each other. Routers will then use this information to determine their own best path to those known destinations.
+And if the state of the network changes, like if a link goes up or down, or if a new network is added to the
+topology, then the routers will automatically update each other with that information. Routers can
+use that information to automatically calculate a new best path and update their routing table in accordance
+with those network changes.
+
+three routers R1, R2, and R3. 
+To the right of R1 got the 10.0.1/24 and the 10.0.2/24 networks. 
+R2 and R3 are not directly connected to those networks, so they're going to need a way to find out about them.
+can use static routing, which would require me as an administrator to configure static routes everywhere
+or we can have them learn it automatically through the use of dynamic routing protocols. 
+configure a dynamic routing protocol on both R1, R2, and R3, and
+they will then share information about their networks with each other.
+R2 also has a relationship with R3, so it will advertise
+information there as well (it will update the Routing Table). So R2 will tell R3," you can get to these networks via me"
+Obviously, the same thing is going to also happen in the opposite direction, where R3 is going to
+advertise its routes to R2, which will then advertise them on to R1.
+
+Just like we could with static routes, we can use summary routes with our dynamic routing protocols as well.
+rather the two individual /24s, it advertises 10.0.0.0/16. Reasons we would do this,
+summary routes lead to less memory usage in routers as their routing tables contains less routes.
+
+less CPU usage as changes in the network only affect other routers in the same area. Means only the nearby router will be
+recalculate the path, others wont know about a route is down.
+
+dynamic routing protocols are more scalable than administrator-defined static routes.
+the routers automatically advertise available subnets to each otherwithout the administrator having to manually enter every route on every router.
+dynamic routing protocols, if a subnet is added or removed the routers will automatically discover that and update their routing tables.
+if the best path to subnet goes down, dynamic routing protocol routers will automatically discover that and will calculate a new best path if one is available.
+
+It is pretty common that you'll use a combination of both a dynamic routing protocol and you'll also have some static routes there as well.
+In that case, the bulk of the information is going to be carried with your dynamic routing protocol.
+You're only going to use static routing for special use cases, for example, if you want to configure a 
+backup route or for a static route to the internet.
+
+
+
 
 
