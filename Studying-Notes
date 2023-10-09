@@ -125,6 +125,9 @@ Check Telnet. So from one router (R1), I'm going to telnet to 10.10.30.1 (DNS se
 
 
 ---------------- troubleshooting layer 1
+
+Layer 1 troubleshooting tools are 'show ip interface brief' and 'show interface'.
+
 at Layer 1, useful command is 'show ip interface brief'.
 When you do that, it will show you the status of the interface. If it shows 'administratively down',
 that means you haven't entered the no shutdown command. 
@@ -141,6 +144,56 @@ That typically indicates a Layer 2 issue or a speed mismatch. So, in this case, 
 A common issue would be if you've got different VLAN settings on both sides of the link.
 
 
+---------------- troubleshooting layer 2
+
+troubleshoot Layer 2 issues are 'show arp' and 'show mac address-table' on our switches
+
+
+---------------- troubleshooting layer 4
+
+we can 'telnet' to the destination IP address and the port number, and that will tell us if it's answering on that port or not.
+
+---------------- troubleshooting layer DNS 
+
+we can do an 'nslookup'.
+We can also ping by the FQDN to see if a DNS server is able to resolve that name.
+
+
+--------- Connectivity Troubleshooting
+
+when users complain that they can't access the Internet or an internal company application over the network.
+Two of the main tools that we have to troubleshoot these issues are ping and traceroute.
+
+----ping it's used for testing connectivity.
+
+If the ping is successful on a Cisco router, you will see exclamation marks.
+It's quite normal for the first ping to fail if the router is updating its ARP cache at the time. So if we've got a success rate of 80%, 4 out of 5 pings are good
+If you see 5 dots though, that is bad. That indicates the ping has failed. So this could be because the router does not have a corresponding route or the destination IP address is not responding. 
+Less common is, you can see U's, which means that it is unreachable. That happens if the router discards the packet. For example, if it's being blocked by an Access Control List (ACL)
+
+if you're ever doing a ping from a router because our users complained of connectivity issues, do the ping with the source address on the same subnet.
+
+'extended ping' command
+invoke an extended ping is just enter 'ping' and then hit enter.
+It will then go through a wizard that will ask you the options you want to set for the ping.
+"Do you want to go into the extended commands?"
+So we say, "Yes" there. The first thing that it'll ask is, "What do you want to use as a source address?"
+Then we can say the IP address that the actual client is having the problems is in, and then just keep hitting enter to accept the defaults for everything else.
+
+
+----Traceroute is very similar to ping, and it's also used for checking connectivity
+
+what traceroute does is it traces the path the traffic is taking when it's going across the network
+traceroute takes advantage of the TTL field, which is in the IP header
+
+TTL - Every time that a router passes a packet on from one interface to another, it decrements the TTL by one
+If we were sending something, maybe 10 hops away, then R1 would send the first packet with a TTL of 1, then a TTL of 2, then a TTL of 3, and so on.
+And by doing that, it's able to map out the path that the traffic is taking, hop by hop, all the way across to the destination. 
+
+
+if a ping succeeds and a traceroute fails, don't worry about it.
+The traffic is working. Sometimes, the last hop will fail in a traceroute.
+Also, sometimes, firewalls will drop traceroute traffic as well.
 
 ========================= BACKUP CONFIGURATION =========================
 
