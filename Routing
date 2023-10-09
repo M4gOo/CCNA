@@ -452,6 +452,59 @@ So what we'll do is on the final outbound router, which is connected out to the 
 static route there, and we will then advertise, it inject it into RIP, so all of our other internal routers will learn about it automatically.
 
 
+=======================  EIGRP ====================================
+
+EIGRP stands for the Enhanced Interior Gateway Routing Protocol.
+It supports large networks. It has a very fast convergence time, way quicker than RIP
+It supports bounded updates where network topology change updates are only sent to routers affected by the change, so it's more efficient. 
+It doesn't flood information everywhere when it doesn't need to. 
+And messages are sent using multicast rather than broadcast
+
+perform equal cost load balancing on up to 4 paths by default. You can manually increase that up to 16
+paths that it can load balance over if you want to.
+
+EIGRP is also the only routing protocol that can also do unequal cost load balancing. So all of the
+other routing protocols, if there's multiple paths that have got the same metric, then they can load balance
+over those equal cost paths. But EIGRP, it can have multiple paths with unequal metrics, and you can
+configure it to load balance over those different paths
+
+To enable it, we say 'router eigrp' and then an AS number
+
+at global config.
+
+The AS is the Autonomous System number, meaning an independent administered domain. EIGRP routers need
+to have the same AS number to peer with each other.
+So you could have, say, two different organizations that have got an extranet with each other. So they're
+connected, and they're both using EIGRP internally. In that case, they would use two different AS numbers.
+So Organization A would have its AS number, and it would have its internal routes. Organization B would
+have a different AS number, and it would have its own internal routes. And EIGRP between the two organizations,
+even though it's physically connected, would not peer. They wouldn't be sharing information with each other.
+
+the router ID
+EIGRP routers identify themselves to other EIGRP routers using a router ID, and this is in the form of an IPv4 address.
+The router ID will default to being the highest IP address of any loopback interfaces configured on
+the router, or if there's no loopbacks, then it will be the highest other IP address on a physical interface.
+it's recommended to either use the loopback interface, or another way that you can do it is to manually specify a router ID.
+
+To view what the router ID is, we can do a 'show ip protocols'. So in the output of that command,
+for example, my router ID is tend or 10.0.3.1.
+If I did have a loopback, then even if the loopback interface is lower than the IP address on
+a physical interface, it will be the router ID.
+the EIGRP router ID. It needs the EIGRP process to be restarted before it will pick up the new IP address.
+you could disable and then re-enable EIGRP, or you could reboot the router.
+That will force it to come up with that loopback address as the router ID.
+
+If you want to manually specify the router ID, the command is under the EIGRP process,
+'eigrp router-id' 
+and then the router ID that you want to use, that has to be in the format of an IPv4 address.
+ this isn't actually an IP address. It's just a router ID, but it uses the format of an IP address
+'eigrp router-id 2.2.2.2'
+
+
+
+
+
+
 
 
 
