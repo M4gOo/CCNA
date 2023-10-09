@@ -331,6 +331,39 @@ if either path goes down. this is useful for management, and it's really critica
 
 ==================  Adjacencies and Passive Interfaces =====================
 
+Our Interior Gateway routing protocols, so RIP, EIGRP, and OSPF, are configured under global configuration. And then, they're either
+enabled or not on the router's individual interfaces. When the routing protocol is enabled on an interface,
+the router will look for other devices on that directly connected link, which are also running the routing
+protocol in order to peer with them. The router does this by sending out and listening for hello packets for that particular routing protocol.
+
+When a matching peer is found, the routers form an adjacency with each other and exchange routing updates with each other.
+Modern routing protocols use multicast for the hello packets.
+This is more efficient than broadcast that was used by earlier protocols, like RIP version 1. With multicast,
+it's specific to the particular routing protocol. So, a device is only going to process that packet if
+it's interested in forming an adjacency with that routing protocol. 
+
+Example R1 is connect with others routers, R1 will not send out or listen for hello packets on fastEthernet2/0, because we didn't enable the roouting protocol on that interface.
+This interface is connected to RC. RC is a partner, we need to have connectivity to them but we're not going to be giving
+them out internal information. In that case, we could use static routes between us and them just to give very limited connectivity.
+if an interface is not included in the routing protocol, then the router won't send hello packets out there, and also it won't advertise the subnet configured on that link to other routers either.
+
+what if we do actually need RA and RB to learn a route to get to 10.0.2.0/24 (on fastEthernet2/0)?
+
+That's where passive interfaces come in. Passive interfaces allow you to include an IP subnet in the routing protocol without sending updates out of the interface.
+if fastEthernet2/0 is configured as a passive interface, RA and RB will learn routes to 10.0.2.0, but internal network information will not be sent out to RC.
+
+
+It's best practice to configure your loopback interfaces as passive interfaces always.
+It's impossible for another router to be directly connected to the loopback interface, because it's not a physical interface. 
+It's just logical, so there's no way we're going to ever form an adjacency on a loopback.
+We want other routers to learn how to get to the loopback, but we don't want to waste resources sending out and listening for hello packets when we know
+that there's never going to be another router connected in on that link.
+
+
+
+
+
+
 
 
 
