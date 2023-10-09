@@ -224,6 +224,7 @@ use the shortest hop count even if those links are low bandwidth links, which wo
 RIP is not normally used in production networks. Only in really small networks or in test environments.
 
 
+
 OSPF does take bandwidth into account.
 It uses cost as the metric which is automatically derived from interface bandwidth by default.
 You can also manually configure the cost of the links if you want to manipulate the path that OSPF is typically
@@ -401,6 +402,60 @@ it's the most specific, which is the one with the longest prefix.
 We have got routes which end in prefix /30, /28, /26, /24 and /16, which is the longest?
 Which is the biggest number? 
 It's the/30.
+
+
+
+=========================== RIP =========================
+
+the Routing Information Protocol. RIP is a Distance Vector routing protocol.
+RIPv2 uses multicast address, 224.0.0.9
+RIPv2 supports authentication we can put a password on the router on both sides of the link, so they will not form an adjacency unless we both have the same matching password.
+
+We also have RIPng, as well as RIPv1 and on RIPv2. RIPng is RIP next generation, that supports IPv6 networks
+
+Configure RIP
+global config we say 'router rip' and then, optionally, we're going to say 'version 2'. We do want it to be running the latest version, 
+and then to specify the interfaces that you want RIP to be running on and to be advertised,
+we use the 'network' command. 
+we've said 'network 10.0.0.0'. All interfaces that begin with 10 will start sending out RIP hello messages and try to form an adjacency.
+When they do form a peering relationship with the router on the other side of the link, they will advertise
+all of the 10.X.X.X networks to that router. The network command should reference a classful network, and no
+subnet mask is specified. For example, if on the router, we had an interface with IP address 10.1.1.1/24,
+we don't say 'network 10.1.1.0', we say 'network 10.0.0.0'. 
+RIP will automatically summarize routes to the classful boundary by default.
+For example, if you've got an interface with IP address 192.168.10.1/30, and under RIP, you include that with a network statement,
+it will be advertised as 192.168.10.0/24. Because any address that begins with 192 is a Class C address, which has got a default mask of /24.
+If we had an interface with IP address 172.16.10.1/30, that will be advertised as 172.16.0.0/16, because that's a Class B address and it would default to a /16.
+
+Your network, modern real networks, aren't designed that they all fall into the summarization ranges exactly on classical boundaries. 
+So, if you leave auto-summary turned on, it's liable to cause havoc on your network, possibly blackholing, dropping some of your traffic.
+we always disable auto-summary. To do that, the commands is 'router rip' and then 'no auto-summary'
+we probably still will want to do summarization manually. To do that, the command is 'ip summary-address'.
+
+to verify any routing protocol that we've got running on a router, we can say
+'show ip protocols'
+
+If I wanted to see my RIP configuration
+'show run | section rip'
+
+if you've configured RIP and then you can see that you've got RIP neighbors,
+but you look in the routing table and you're not seeing the expected routes in there.
+maybe, the routes weren't even received at all.
+So the way that you can check that is with the 
+'show ip rip database'
+or maybe the routes were received but they're not the best route. So to check if the routes were received at all by RIP, whether or not they made
+it in routing table or not
+
+default route injection.
+we don't want to have to configure a default static route on every single router.
+So what we'll do is on the final outbound router, which is connected out to the Internet,we will configure a default
+static route there, and we will then advertise, it inject it into RIP, so all of our other internal routers will learn about it automatically.
+
+
+
+
+
+
 
 
 
