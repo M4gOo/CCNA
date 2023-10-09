@@ -501,13 +501,49 @@ and then the router ID that you want to use, that has to be in the format of an 
 'eigrp router-id 2.2.2.2'
 
 
+===========================   OSPF  ======================
+
+ Open Shortest Path First Protocol.
+it is an IGP -  Interior Gateway Routing Protocol
+It's a Link State routing protocol 
 
 
+---------  characteristics of OSPF
 
+it supports large networks and has very fast convergence time. 
+Messages are sent using multicast rather than broadcast, so it's more efficient
+It is supported on all vendors' equipment, and there's plenty of support for OSPF, supported by everybody,
+loads of engineers understand it and are used to working on it, lots of documentation on the Internet, etc.
 
+Link State routing protocols, each router describes itself and its interfaces to its directly connected neighbors.
+This information is then passed unchanged from one router to another. 
+OSPF routers use LSA, Link State Advertisements, to pass on the routing updates.
 
+when you enable OSPF on a router, the first thing it will do
+will discover its directly connected neighbors and form adjacencies with them.
+They will then share routes with each other
+by flooding the Link State Database (LSDB). Once all of the potential routes are learned, the router will then compute
+the shortest path and the best routes will be installed in the routing table.
+After that, the routers will respond to network changes, for example, if any new links are added, or if any links go down. 
 
+Our different packet types that are used in OSPF,
+first one is the Hello packet.
+As soon as you enable OSPF on an interface, it will start sending out and listening for Hello packets.
+And when it receives a Hello packet on that interface, it will form an adjacency with the neighbor.
+Once the routers have formed adjacencies, they will send DBDs to each other. DBD is the Database Descriptor.
+That includes information about all the networks that the routers know about. If the router is missing
+information about any of the networks it received in the DBD from a neighbor, it will send that neighbor
+an LSR, which is a Link State Request, asking for more information.
+The router will reply back with an LSA, a Link State Advertisement.
 
+Other packet types we can have is an LSU, a Link State Update. That contains a list of LSAs which should be updated.
+This is used during flooding.
+So for example, if a new link was added or if a link went down,
+that information needs to get flooded everywhere with an LSU.
+And finally, we have the LSAck, which is the acknowledgement message.
+Whenever a router receives a message from a neighbor, it will send an acknowledgement back.
+So, this makes sure that the protocol is reliable.
+If a router sends out a packet and it doesn't get an acknowledgement, it will resend it.
 
 
 
