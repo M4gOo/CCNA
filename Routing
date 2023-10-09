@@ -360,16 +360,47 @@ We want other routers to learn how to get to the loopback, but we don't want to 
 that there's never going to be another router connected in on that link.
 
 
+========================= How to decide best route =========================
+
+A router's main job is to forward packets received towards their destination based on the packet's destination
+IP address and it decides where to forward a packet based on the routes that it has learned.
+
+The 'best route for a packet' decision is based on 
+first the longest prefix, which is the most specific route.
+Then it is on add Administrative Distance (A lower value, a lower number is better) 
+then it is on the metric (known as the cost. You want the lowest cost possible)
+
+If a router learns multiple routes for the exact same network and prefix, it must decide which is the best route out of them.
+For example, if it's received a route to 192.168.0.0/24 via TCP from R2, and it's also received a different route via OSPF from R3 for that same network and prefix 192.168.0.0/24
+The criteria which is used to decide which is the best route is first up the Administrative Distance.
+A lower value, a lower number is better.
+And if there is a tie, meaning I've received multiple routes to that same network and prefix with the
+same Administrative Distance, then we need a tie breaker and we use the metric as the tie breaker. 
+Metric, also known as the cost. You want the lowest cost possible.
+
+If there's multiple best routes which have got the same Administrative Distance and metric, 
+they're exactly the same to the same network and prefix, we've got the same Administrative Distance and we've got the same metric, but you've learned multiple routes with those exact same values and they will
+all enter the routing table and the router will perform
+equal cost load balancing over those different routes.
 
 
+Example a router learn many routes with the same network of 192.168.0.0, but they've all got different prefixes (/24, /30, /26, /28)
+They're only the same if it's the exact same network AND prefix.
+If either of those are different, then it is a different destination.
+So if we do a show IP route, we're going to see that they all go into the routing table.
+The router is not choosing between them because they're different routes going to different destinations,
+so they don't have any competition for the exact same network and prefix.
+So all of them are the best route to that particular network and prefix.
+So all of them go into the routing table.
 
+So they do have overlapping addresses, but they're not exactly the same ranges of addresses.
 
-
-
-
-
-
-
+192.168.0.2 matches all of those routes. it matches all of the different routes.
+which one does it decide is the best route that it's going to use?
+it's the most specific, which is the one with the longest prefix.
+We have got routes which end in prefix /30, /28, /26, /24 and /16, which is the longest?
+Which is the biggest number? 
+It's the/30.
 
 
 
