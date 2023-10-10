@@ -596,16 +596,50 @@ and check that you've got OSPF routes in the routing table.
 
 -------- Advanced OSPF topics of the router ID, how to configure passive interfaces, and default injection
 
+-> router ID
+OSPF routers identify
+themselves to other OSPF routers using an OSPF router ID, which is in the form of an IPv4 address.
+It defaults to using the highest IP address of any loopback interfaces configured on the router, or if there's
+no loopback interfaces, it will use the highest other IP address.
+Best practice is to use a loopback or manually set an ID, so it won't change, makes things more stable
+Router ID. We can verify that by using the 'show ip protocols' command.
+To update the Router ID in a production environment,
+you would just wait until the next reboot because disabling and re-enabling OSPF would be disruptive
+
+if you want to manually configure it is under the 'router ospf' configuration, 'router-id', and
+then the ID that you want to use, in the format of an IP version 4 (IPv4) address
+(config-router) router ospf 1
+(config-router) router-id 2.2.2.2
 
 
+-> passive interfaces
+if you configure a passive interface, it will be advertised in OSPF. So other routers will learn how to get to that network,
+but the interface itself will not try to form any adjacencies, and it won't give out any internal information.
 
+we have to include it as a passive interface, so that your other routers will learn how to get to that loopback address
+we want our other internal routers to know how to get to that network, but we don't want to be giving out
+any of our own internal information out on that link
+(config)# router ospf 1
+(config-router) passive-interface loopback 0
+(config-router) passive-interface f2/0
 
+-> route injection
+this is configured in a similar way as RIP
+R4 is connected out to an Internet Service Provider (ISP), so we configure a static default route on R4 with the command
+'ip route 0.0.0.0 0.0.0.0 203.0.113.2'  203.0.113.2 it is the next hop which is the internet
+We don't want to have to configure static routes to get out to the Internet on all of our routers,
+we want them to learn that dynamically,
+so we're going to inject it into the OSPF process on router R4. The command to do that is 
+'router ospf 1'
+and then, 
+'default-information originate'
 
-
-
-
-
-
+o verify it do a 
+'show ip route' on your other routers
+check that they do have a default route to the 0.0.0.0 network.
+This will show up as an external route in OSPF.
+What an external route is, it doesn't mean it's come from somewhere outside your organization.
+What it means is that the route was redistributed into OSPF. 
 
 
 
