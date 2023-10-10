@@ -634,12 +634,106 @@ so we're going to inject it into the OSPF process on router R4. The command to d
 and then, 
 'default-information originate'
 
-o verify it do a 
+To verify it do a 
 'show ip route' on your other routers
 check that they do have a default route to the 0.0.0.0 network.
 This will show up as an external route in OSPF.
 What an external route is, it doesn't mean it's come from somewhere outside your organization.
 What it means is that the route was redistributed into OSPF. 
+
+
+---------------  OSPF areas
+
+Link State routing protocols, every router learns the full picture
+of it's part of the network, including every router,
+its interfaces, and what they connect to, and this can cause issues in large networks.
+there is going to be a lot of routes in its routing table and that can take up too much memory.
+Also, if there's a change in the network, like a new link being added or a link going down, that causes
+all routers to reconverge which takes time and CPU resources.
+
+OSPF supports a hierarchical design, which segments large networks into smaller areas.
+Each router maintains full information about its own area, but only summary information about other areas.
+So the routers are going to have less routes in their routing table and if a new link comes up or goes down in another area
+We've got the transit area, also known as the backbone or Area 0.
+It does not generally contain end users when we've got a multiarea network. And then we've got our regular areas,
+also known as our nonbackbone areas, which hang below Area 0.
+They're used to connect end users to the transit area. By default,
+all transit traffic goes through the transit area.
+Area 0 it is the backbone router
+your backbone routers will have the full Link State Database (LSDB) for all of the other links that are also in Area 0.
+
+ABR, our Area Border Router. Routers which have interfaces and multiple areas are ABRs.
+hey separate the flooding zones. This is what really segregates our network into the different areas and compartmentalizes our network.
+So if we have a link goes up or goes down in that area, it's going to keep the information just in that one area. It doesn't impact our other areas. 
+The ABR is also where we always do our summarization in OSPF
+full Link State Database (LSDB) for Area 0, so it knows about all the individual networks in Area 0, and it also has the full Link
+State Database (LSDB) for Area 1. Our ABR on the right here, it will have the full LSDB for Area 0
+and for Area 2, but it only has summary information for Area 1. Ideal design is to have each ABR connected
+to two areas only, the backbone and another normal area. An important point is that your ABRs do
+not automatically summarize. You need to do this manually, and if you don't manually configure summarization,
+all routes will be flooded everywhere
+
+so a route that was a learned from an ABR which is in another area, will show up as 
+type 'O IA'
+for inter area routes.
+
+ASBR, an Autonomous System Boundary Router.
+So ABR is an Area Border Router, ASBR is Autonomous System Boundary Router. What and ASBR is
+it means that on that router, it's running OSPF and we're redistributing from another source into OSPF.
+So maybe, we're also running EIGRP or RIP on that router. We're taking our EIGRP or RIP routes and we're
+redistributing them into OSPF, so they'll also be advertised through our OSPF neighbors, or maybe it's
+a static route that we're redistributing into OSPF.
+
+Our redistributed routes show up as external route. So an external route
+does not mean it's outside this enterprise, outside this organization. It literally means it was redistributed
+into OSPF and if you look at the routing table, this will show up as a type 'O*E' either E1 or E2 for an external route.
+
+
+
+------------ OSPF cost metric works and how it's based on interface bandwidth by default
+
+'speed' command 
+it's the 'speed' command that you can use to change the default physical speed of the interface.
+The rate that Ethernet interfaces physically transmit at is set by the 'speed' command.
+GigabitEthernet interfaces transmit at 1000 megabits per second (Mbps) by default. 
+A thousand megabits per second is 1 gigabit per second
+FastEthernet interfaces transmit at 100 megabits per second by default.
+if you use the 'speed 10' command on a FastEthernet interface and it supports it, it will
+physically transmit at 10 megabits per second instead.
+it has to match on both sides of the link.
+
+'clock rate' command
+this works on Serial interfaces. Serial interfaces used to be used very commonly on WAN links
+Serial interfaces transmit at 1.544 megabits per second by default. 
+That is the speed of a T1 interface that used to be commonly used in the United States.
+'clock rate' command to set a transmit rate in kilobits per second (Kbps).
+this will change the physical speed of the interface,  it has to match on both sides of the link.
+
+'bandwidth' command
+'bandwidth' does usually match physical transmission rate of the interface. It will do by default
+and normally, as the administrator, we want to leave it at that as well.
+The bandwidth setting on an interface does not affect the physical transmission rate, that is set by the 'speed'
+or the 'clock rate'.
+If you set a bandwidth of 50 megabits per second on a FastEthernet interface, it will still transmit
+at 100 megabits per second.
+it affects software policy on the router, such as which path will be selected by our routing protocols,
+EIGRP or OSPF, or how much bandwidth will be guaranteed through a traffic type by QoS.
+you normally want the bandwidth to actually match the physical interface. 
+you don't have to have the matching. Sometimes, you want to override what would happen by default.
+So you don't do this very commonly, but it is possible to set the bandwidth to be different than the
+actual bandwidth on the physical interface if you want to influence software policy.
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
