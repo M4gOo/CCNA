@@ -546,6 +546,75 @@ So, this makes sure that the protocol is reliable.
 If a router sends out a packet and it doesn't get an acknowledgement, it will resend it.
 
 
+-------------- basic configuration of OSPF 
+
+enable OSPF, the top level command at global config is 'router ospf' and then, a Process ID.
+(config)# router ospf 1
+
+It's not normal to have different Process IDs on the router.
+even though the Process ID is different on the routers, that's a locally significant number. It does
+not have to match on both sides, so the routers will still form adjacencies.
+
+interfaces are in two different processes.
+So they're going to have separate Link State Databases, and information is not going to be shared between the two sides.
+So R1 and R3 will not learn routes to each other because both sides are in different process IDs on router R2.
+It is absolutely not normal to do that. Very rare that you would see this.
+
+What is more normal is where all the routers in your network are all using the same Process ID number
+we configured router OSPF and usually we'll use a Process ID of 1. The next command to use is the network command
+network, and then the network address, space, and then the wildcard mask, which is the inverse of the subnet mask, and then
+specify the area. If you've got a small network, you can just put everything in area 0.
+'network 10.0.0.0 0.0.255.255 area 0'
+
+If your subnet mask was 255.255.255.252, your wildcard mask would be 0.0.0.3
+
+show all of the OSPF commands in your running config, whether they're under the main OSPF part of the configuration
+or at the interface level.
+#sh run | section ospf
+
+'show ip protocols'
+will show all the routing protocols that are running on the router. 
+
+'show ip opf interface brief'
+will show which interfaces have got OSPF enabled on them on this router,
+the Process ID for the interface, the area, the IP address and mask, the cost for the metric, and how
+many neighbors are reachable through that interface. 
+
+'show ip ospf neighbor'
+The command to check that is  check is that it has been able to form adjacencies.
+
+The next thing that happens with OSPF operations is the routers will flood the Link State Database (LSDB). To see if
+routes have been learned from OSPF, you can use the 
+'show ip ospf database'
+
+The next thing that happens is the routers will look at all the available possible paths, and they will
+decide which is the best path using the Shortest Path First algorithm, and put that best path into the routing table.
+So, next command to verify is 
+'show ip route' 
+and check that you've got OSPF routes in the routing table.
+
+
+-------- Advanced OSPF topics of the router ID, how to configure passive interfaces, and default injection
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
