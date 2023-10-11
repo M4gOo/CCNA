@@ -732,6 +732,880 @@ need to select your correct COM port on your computer when you open the Putty so
 You'll often see that it comes in useful for troubleshooting as well using console cable
 
 
+===================== ROUTING =================================
+
+
+
+A router has got two main functions
+that's to determine the best path to available networks, and then to forward actual production traffic to those networks.
+
+The best available path or paths to a destination network are listed in a router's routing table andwill be used for forwarding traffic.
+A router may learn lots of different routes, but the best routes into the routing table will be used.
+
+-----------Routing Table
+It consists of directly connected networks and routes configured statically by the administrator or dynamically
+learned through a routing protocol.
+when you do configure the IP addresses on the router's interfaces, it will automatically add routes corresponding
+to those into the routing table.
+The command to view the routing table on a router is 
+'show ip route'
+
+To find out the IP address on the interface, we'd have to
+do a 'show ip interface brief' or another similar command to find out that information. 
+The show ip route command only shows the subnets available
+
+as soon as you've configured IP addresses on your router interfaces, it can automatically route traffic between those directly connected networks.
+
+
+Another type of route that is going to show up in your routing table after you've configured IP addresses
+on your interfaces is local routes.
+these are only going to show up from IOS version 15. Earlier versions did not show these. Local routes always have a /32 subnet mask
+From IOS 15, it tells you the subnets that are available on each interface, and
+it also tells you the actual IP address that is configured on the interface as well.
+
+
+===================  static routing ================================
+
+if a router wants to send traffic to a subnet that it's not directly connected to, then it's
+going to need some way to know how to get there.
+So you need to get that route into the routing table.
+You can either do it manually as an administrator by adding a static route, or the router can learn it
+dynamically through a routing protocol.
+
+ip route 10.1.0.0 255.255.255.0 10.0.0.2
+The command that I need to add is 'ip route 10.1.0.0 255.255.255.0',
+so the subnet I need to get to including its subnet mask.
+Then, I say the next hop IP address that I need to send traffic to in order to get there.
+So for R1, to send traffic to the 10.1.0.0 network, it needs to send it out of its fastEthernet0/0
+interface and send it to 10.0.0.2 on router R2, so I add the route for that.
+
+another case
+When I add the target for the route, it has to be reachable on a directly connected interface. So R3,
+to get to R1, it sends a traffic via R2 which it is directly connected to. 
+
+
+=====================  summarization and the default route ===========================
+
+we don't need to enter routes for its directly connected networks.They were automatically put into the routing table when we configured our IP addresses.
+we do need to configure routes for anywhere that the router is not directly attached to.
+
+it is possible to summarize that into one route
+For static routing, summary routes lessen the administrative overhead because if you've got
+less routes to configure, that lessens the workload on you.
+It also lessens the memory usage on the routers. The last routes that are in the routing table, the
+last memory it's going to take up.
+
+So rather than having separate routes for 10.1.0.0, 10.1.1.0, and 10.1.2.0, which
+are all of a /24, I've configured one route for 10.1.0.0 with a subnet mask of 255.255.0.0.
+I summarized at the classful boundary for a class B address, which is going to
+cover our routes all the way from 10.1.0.0 to 10.1.255.0, which is a pretty big range.
+
+Maybe we don't want to have all of those subnets available behind R2
+So rather than saying ip route 10.1.0.0 and then to 255.255.0.0, 
+lets use route 10.1.0.0, and then subnet mask of 255.255.252.0, and again pointing at
+R2 at 10.0.0.2. 
+
+
+------------- Longest Prefix Match
+
+the router going to take? It takes the one with the longest prefix.
+The second route is got a prefix of 255.255.255.0.
+The first route is got 255.255.0.0. 
+So the second route is a longest prefix.
+
+---------
+what if you've got multiple routes for the exact same destination? Meaning, it has the same destination
+IP address and the same prefix as well?
+In that case, the router will load balance the traffic over those routes.
+
+-------- default gateway
+the Internet side, it's 203.0.113.2 at
+our service provider. So to add a route going out to everywhere else that we haven't specifically
+had a route for elsewhere, it is '0.0.0.0 0.0.0.0' so
+our full command is 'ip route 0.0.0.0 0.0.0.0' going to the next hop at our service
+provider of 203.0.113.2.
+default route is a catch-all for any traffic that does not match one of our more specific routes.
+
+
+
+========================  dynamic routing protocols comnparing with static protocol ===============================
+
+
+When a routing protocol is used, routers will automatically advertise their best paths to
+known networks to each other. Routers will then use this information to determine their own best path to those known destinations.
+And if the state of the network changes, like if a link goes up or down, or if a new network is added to the
+topology, then the routers will automatically update each other with that information. Routers can
+use that information to automatically calculate a new best path and update their routing table in accordance
+with those network changes.
+
+three routers R1, R2, and R3. 
+To the right of R1 got the 10.0.1/24 and the 10.0.2/24 networks. 
+R2 and R3 are not directly connected to those networks, so they're going to need a way to find out about them.
+can use static routing, which would require me as an administrator to configure static routes everywhere
+or we can have them learn it automatically through the use of dynamic routing protocols. 
+configure a dynamic routing protocol on both R1, R2, and R3, and
+they will then share information about their networks with each other.
+R2 also has a relationship with R3, so it will advertise
+information there as well (it will update the Routing Table). So R2 will tell R3," you can get to these networks via me"
+Obviously, the same thing is going to also happen in the opposite direction, where R3 is going to
+advertise its routes to R2, which will then advertise them on to R1.
+
+Just like we could with static routes, we can use summary routes with our dynamic routing protocols as well.
+rather the two individual /24s, it advertises 10.0.0.0/16. Reasons we would do this,
+summary routes lead to less memory usage in routers as their routing tables contains less routes.
+
+less CPU usage as changes in the network only affect other routers in the same area. Means only the nearby router will be
+recalculate the path, others wont know about a route is down.
+
+dynamic routing protocols are more scalable than administrator-defined static routes.
+the routers automatically advertise available subnets to each otherwithout the administrator having to manually enter every route on every router.
+dynamic routing protocols, if a subnet is added or removed the routers will automatically discover that and update their routing tables.
+if the best path to subnet goes down, dynamic routing protocol routers will automatically discover that and will calculate a new best path if one is available.
+
+It is pretty common that you'll use a combination of both a dynamic routing protocol and you'll also have some static routes there as well.
+In that case, the bulk of the information is going to be carried with your dynamic routing protocol.
+You're only going to use static routing for special use cases, for example, if you want to configure a 
+backup route or for a static route to the internet.
+
+
+
+================== Routing Protocols =====================================
+
+outing protocols can be split into two main types, thats our IGPs, which are our Interior Gateway Protocols and EGP, which is an
+Exterior Gateway Protocol.
+
+Interior Gateway Protocols (IGP) are used for routing within an organization.
+Exterior Gateway Protocol (EGP) is used for routing between organizations over the Internet.
+
+the only EGP that is in use today is BGP, the Border Gateway Protocol.
+
+IGPs can be split into two main types, either
+Distance Vector routing protocols or Link State routing protocols. 
+
+
+---------- Distance Vector protocols 
+
+each router sends its directly connected neighbours a list of all its known networks, along with its own distance to each of those networks.
+Distance Vector routing protocols do not advertise the entire network topology. 
+A router only knows its directly connected neighbours and the list of networks those neighbours have advertised.
+because of this, Distance Vector routing protocols are often called as routing by rumuor.
+
+
+---------  Link State routing protocols
+
+In Link State routing protocols, each router describes itself and its interfaces to its directly connected neighbors.
+That information is then passed unchanged from one router to another.
+Every router thus learns the full picture of a network, including every router, its interfaces, and what they connect to.
+
+
+----------- similar DV and LS
+
+Distance Vector and our Link State routing protocols,
+both of them only form an adjacency with directly connected neighbors.
+
+----------- difference DV and LS
+
+The difference is that with Distance Vector routing protocols, those updates are from the point of view of the neighbor.
+The neighbor says, "I know about these networks and this is what my distance is to each of those." With
+Link State routing protocols, the routers still talk to their neighbors
+that they say, "Hey, these are all of the routers and their links that are in the network." And the information
+passes along unchanged.
+
+
+Link State routing protocols, the routers have a full picture of the topology and they have a reputation
+of being able to make better routing decisions because of this. But Link State routing protocols
+do put a bit more load on the router because it's got more information there.
+
+
+IGPs are: RIP, the Routing Information Protocol; 
+EIGRP the Enhanced Interior Gateway Protocol - a Cisco proprietary Distance Vector routing;
+OSPF, which is Open Shortest Path First - it's the most commonly deployed IGP today;
+ISIS, which is Intermediate System to Intermediate System.
+
+
+RIP and EIGRP are Distance Vector routing protocols
+OSPF and ISIS are Link State routing protocols
+
+
+our IGPs, they all do the same job which is to advertise routes
+within an organization and determine the best path or paths to the different networks.
+
+
+an organization will typically pick one of the IGPs. They all do the same job,
+so there isn't really any need to use more than one of them. Actually using more than one of them is
+a bad idea. But does sometimes happen though, usually because of a merger or maybe just historical reasons
+If that does happen, then information can be redistributed between the different routing protocols.
+But because they work in different ways internally, this can get a bit messy.
+
+
+
+===================  routing protocol metrics =======================================
+
+A router may receive multiple possible paths to get to a destination network because it might have multiple
+different ways it can get to that network.
+It might have multiple neighboring routers with paths available through all of them.
+Only the best path,
+however, out of all the ones that the router knows about is going to make into the routing table and be used. 
+So the different Interior Gateway Protocols (IGPs) needs some way of determining which is the best path,
+and they all use different methods to calculate that. Each possible path will be assigned a metric
+value by the routing protocol which indicates how preferred the path is, and the lowest metric value is preferred.
+
+So high numbers are bad, lower numbers are better. Use an analogy with cost, cost lower is better
+
+
+RIP always uses hop count as the metric. A hop is meaning it goes through another router.
+The maximum hop count by default in RIP is 15.
+The paths which are more than 15 hops away are marked as unreachable by default, a scalability limitation with RIP.
+use the shortest hop count even if those links are low bandwidth links, which would really not be the best path.
+RIP is not normally used in production networks. Only in really small networks or in test environments.
+
+
+
+OSPF does take bandwidth into account.
+It uses cost as the metric which is automatically derived from interface bandwidth by default.
+You can also manually configure the cost of the links if you want to manipulate the path that OSPF is typically
+going to take the best path anyway.
+
+
+IS-IS
+also uses cost as the metric, but unlike with OSPF, it's not automatically derived from the interface bandwidth.
+All links have got an equal cost by default.
+if you want to force a particular path to be used in IS-IS based on which path has got the best bandwidth,
+you're going to have to manually you configure that.
+It's not going to do it automatically like OSPF does.
+If you don't manually set the link costs in IS-IS, the lowest hop count will be used.
+IS-IS links need to be manually configured, or it will use hop count to determine the best path which is not usually what we want to happen
+It's typically only used in service provider networks or large organizations with their own MPLS
+network who choose it because of its scalability.
+
+
+EIGRP and it uses the bandwidth and delay of the links to calculate the metric.
+Load and reliability can also be configured, but they're ignored by default.
+So bandwidth is used the same as it was with OSPF, we also have dealy as well.
+But the way the EIGRP works, it's not like it's sending probes over the links to measure what the delay is.
+It uses a fixed delay which is based on what the bandwidth is. So basically, it's based on the bandwidth
+You can manually configure the delay on links if you want to manipulate the path.
+
+
+with OSPF and EIGRP, because it is going to use the best bandwidth links anyway, typically, it's going to
+choose the path that you would want it to.
+But if for some reason it's not, you can override that with manual configuration
+
+
+===================  Equal Cost Multi Path (ECMP) =====================================
+
+If multiple paths to a destination network
+have an equal metric, the router will enter all of those paths into the routing table,
+and it will load balance the outbound traffic to that destination network over those available multiple
+equal cost paths. And all routing protocols, all your IGPs, will perform Equal Cost Multi Path by default.
+
+EIGRP is the only routing protocol that can do Unequal Cost Multi Path.
+So they'll all do Equal Cost Multi Path by default including EIGRP, 
+EIGRP will not do Unequal Cost to load balancing by default, but it can do it if you manually configure it to do so. 
+
+
+=================  administrative distance ======================================
+
+Administrative Distance (AD) is used along with the metric to decide which of the available paths is going to make into the routing table.
+A router will typically only learn routes to a particular destination from a single routing protocol.
+
+if for some reason your organization is running multiple routing protocols and a router receives routes to the
+same destination from those different routing protocols, then it can't compare their metrics to each other.
+For example, a RIP hop count of 5 can't be compared to an OSPF cost of 60.
+
+the router needs to use a different method to choose when routes to the same destination are received from different
+routing protocols, and that's what we use the Administrative Distance for. 
+
+
+The Administrative Distance is a measure of how trusted a particular routing protocol is.
+If routes to the same destination are received via different routing protocols, the protocol with the
+best, which is the lowest, Administrative Distance value wins. With AD the lowest number is best.
+
+So worst is RIP, with a value of 120.
+IS-IS at 115
+OSPF has an AD of 110
+EIGRP is the most preferred of our IGPs it's got an AD of 90. 
+External BGP has 20
+a Static Route has a default AD of 1
+Connected Interfaces will always be preferred, they have an Administrative Distance of 0. 
+
+The Administrative Distance is considered first to narrow the choice down to the single best routing protocol, and then
+the metric is considered to choose the best path or paths, which will make it into the routing table.
+
+'show ip route'
+will show us what routes did make it into the routing table
+in sqaure brackets [120/2] means AD of 120. The second value is the metric 2 hops
+
+
+----------  Floating Static routes
+we want to configure a backup static route 
+it would go through R5 as a first choice. So the command we enter is 'ip route 10.0.1.0 255.255.255.0 10.1.3.2', 
+selecting R5 as the next hop, and then we put in an extra keyword at the end here, we say '115'. That sets and AD of 115, which
+is higher than the OSPF AD of 110, so this will be used as a backup route
+
+if you do a Floating Static route as a backup for OSPF, if any of the links from R4 to R1
+go down, OSPF will detect that and the route will be removed from the routing table. So, that will work just fine
+
+
+
+========================   Loopback Interfaces  ==============================
+
+
+loopback interface is a logical interface, and it allows you to assign an IP address to a router or a Layer 3 switch
+Loopbacks are logical, so it's impossible for them to physically be in the same subnet as other devices. So, they're
+usually assigned /32 subnet masks to avoid wasting IP addresses.
+
+use a loopback. So that way, we get a single IP address that we can use to connect to R1
+even if one of those paths goes down.
+what we do is we add interface Loopback 0, and we give it IP address, in our example, 192.168.1.1/32.
+You can use any IP address you want for the loopback, and we then advertise that in the routing protocol.
+R4 will then learn the two paths that it can use to get to 192.168.1.1,
+and it will use whichever one is got the lowest cost or both
+if they've got equal costs. And R4 can still connect to 192.168.1.1 even
+if either path goes down. this is useful for management, and it's really critical for other things, like BGP and IP telephony
+
+
+
+==================  Adjacencies and Passive Interfaces =====================
+
+Our Interior Gateway routing protocols, so RIP, EIGRP, and OSPF, are configured under global configuration. And then, they're either
+enabled or not on the router's individual interfaces. When the routing protocol is enabled on an interface,
+the router will look for other devices on that directly connected link, which are also running the routing
+protocol in order to peer with them. The router does this by sending out and listening for hello packets for that particular routing protocol.
+
+When a matching peer is found, the routers form an adjacency with each other and exchange routing updates with each other.
+Modern routing protocols use multicast for the hello packets.
+This is more efficient than broadcast that was used by earlier protocols, like RIP version 1. With multicast,
+it's specific to the particular routing protocol. So, a device is only going to process that packet if
+it's interested in forming an adjacency with that routing protocol. 
+
+Example R1 is connect with others routers, R1 will not send out or listen for hello packets on fastEthernet2/0, because we didn't enable the roouting protocol on that interface.
+This interface is connected to RC. RC is a partner, we need to have connectivity to them but we're not going to be giving
+them out internal information. In that case, we could use static routes between us and them just to give very limited connectivity.
+if an interface is not included in the routing protocol, then the router won't send hello packets out there, and also it won't advertise the subnet configured on that link to other routers either.
+
+what if we do actually need RA and RB to learn a route to get to 10.0.2.0/24 (on fastEthernet2/0)?
+
+That's where passive interfaces come in. Passive interfaces allow you to include an IP subnet in the routing protocol without sending updates out of the interface.
+if fastEthernet2/0 is configured as a passive interface, RA and RB will learn routes to 10.0.2.0, but internal network information will not be sent out to RC.
+
+
+It's best practice to configure your loopback interfaces as passive interfaces always.
+It's impossible for another router to be directly connected to the loopback interface, because it's not a physical interface. 
+It's just logical, so there's no way we're going to ever form an adjacency on a loopback.
+We want other routers to learn how to get to the loopback, but we don't want to waste resources sending out and listening for hello packets when we know
+that there's never going to be another router connected in on that link.
+
+
+========================= How to decide best route =========================
+
+A router's main job is to forward packets received towards their destination based on the packet's destination
+IP address and it decides where to forward a packet based on the routes that it has learned.
+
+The 'best route for a packet' decision is based on 
+first the longest prefix, which is the most specific route.
+Then it is on add Administrative Distance (A lower value, a lower number is better) 
+then it is on the metric (known as the cost. You want the lowest cost possible)
+
+If a router learns multiple routes for the exact same network and prefix, it must decide which is the best route out of them.
+For example, if it's received a route to 192.168.0.0/24 via TCP from R2, and it's also received a different route via OSPF from R3 for that same network and prefix 192.168.0.0/24
+The criteria which is used to decide which is the best route is first up the Administrative Distance.
+A lower value, a lower number is better.
+And if there is a tie, meaning I've received multiple routes to that same network and prefix with the
+same Administrative Distance, then we need a tie breaker and we use the metric as the tie breaker. 
+Metric, also known as the cost. You want the lowest cost possible.
+
+If there's multiple best routes which have got the same Administrative Distance and metric, 
+they're exactly the same to the same network and prefix, we've got the same Administrative Distance and we've got the same metric, but you've learned multiple routes with those exact same values and they will
+all enter the routing table and the router will perform
+equal cost load balancing over those different routes.
+
+
+Example a router learn many routes with the same network of 192.168.0.0, but they've all got different prefixes (/24, /30, /26, /28)
+They're only the same if it's the exact same network AND prefix.
+If either of those are different, then it is a different destination.
+So if we do a show IP route, we're going to see that they all go into the routing table.
+The router is not choosing between them because they're different routes going to different destinations,
+so they don't have any competition for the exact same network and prefix.
+So all of them are the best route to that particular network and prefix.
+So all of them go into the routing table.
+
+So they do have overlapping addresses, but they're not exactly the same ranges of addresses.
+
+192.168.0.2 matches all of those routes. it matches all of the different routes.
+which one does it decide is the best route that it's going to use?
+it's the most specific, which is the one with the longest prefix.
+We have got routes which end in prefix /30, /28, /26, /24 and /16, which is the longest?
+Which is the biggest number? 
+It's the/30.
+
+
+=================== MTU ==========================
+
+
+MTU is the Maximum Transmission Unit, and that is the maximum size a pocket can be to be sent across a link on a router.
+If the router needs to send a larger packet than the MTU size, it will fragment it into smaller packets.
+Normally, we just leave the default MTU size of 1500 bytes on Ethernet interfaces, but occasionally
+this needs to be changed, if it's causing an issue with a particular application. It's quite a rare thing to happen.
+
+You can set the 'interface MTU' which affects all packets, and/or an 'interface IP MTU', which affects only IP packets.
+This is a setting on the router's interface.
+
+most commonly, we configure the IP MTU. 
+
+show interface GigabitEthernet 0/0', that will show the interface MTU. 
+To see the IP MTU, it's 'show IP interface' and then the interface number.
+
+
+=========================== RIP =========================
+
+the Routing Information Protocol. RIP is a Distance Vector routing protocol.
+RIPv2 uses multicast address, 224.0.0.9
+RIPv2 supports authentication we can put a password on the router on both sides of the link, so they will not form an adjacency unless we both have the same matching password.
+
+We also have RIPng, as well as RIPv1 and on RIPv2. RIPng is RIP next generation, that supports IPv6 networks
+
+Configure RIP
+global config we say 'router rip' and then, optionally, we're going to say 'version 2'. We do want it to be running the latest version, 
+and then to specify the interfaces that you want RIP to be running on and to be advertised,
+we use the 'network' command. 
+we've said 'network 10.0.0.0'. All interfaces that begin with 10 will start sending out RIP hello messages and try to form an adjacency.
+When they do form a peering relationship with the router on the other side of the link, they will advertise
+all of the 10.X.X.X networks to that router. The network command should reference a classful network, and no
+subnet mask is specified. For example, if on the router, we had an interface with IP address 10.1.1.1/24,
+we don't say 'network 10.1.1.0', we say 'network 10.0.0.0'. 
+RIP will automatically summarize routes to the classful boundary by default.
+For example, if you've got an interface with IP address 192.168.10.1/30, and under RIP, you include that with a network statement,
+it will be advertised as 192.168.10.0/24. Because any address that begins with 192 is a Class C address, which has got a default mask of /24.
+If we had an interface with IP address 172.16.10.1/30, that will be advertised as 172.16.0.0/16, because that's a Class B address and it would default to a /16.
+
+Your network, modern real networks, aren't designed that they all fall into the summarization ranges exactly on classical boundaries. 
+So, if you leave auto-summary turned on, it's liable to cause havoc on your network, possibly blackholing, dropping some of your traffic.
+we always disable auto-summary. To do that, the commands is 'router rip' and then 'no auto-summary'
+we probably still will want to do summarization manually. To do that, the command is 'ip summary-address'.
+
+to verify any routing protocol that we've got running on a router, we can say
+'show ip protocols'
+
+If I wanted to see my RIP configuration
+'show run | section rip'
+
+if you've configured RIP and then you can see that you've got RIP neighbors,
+but you look in the routing table and you're not seeing the expected routes in there.
+maybe, the routes weren't even received at all.
+So the way that you can check that is with the 
+'show ip rip database'
+or maybe the routes were received but they're not the best route. So to check if the routes were received at all by RIP, whether or not they made
+it in routing table or not
+
+default route injection.
+we don't want to have to configure a default static route on every single router.
+So what we'll do is on the final outbound router, which is connected out to the Internet,we will configure a default
+static route there, and we will then advertise, it inject it into RIP, so all of our other internal routers will learn about it automatically.
+
+
+=======================  EIGRP ====================================
+
+EIGRP stands for the Enhanced Interior Gateway Routing Protocol.
+It supports large networks. It has a very fast convergence time, way quicker than RIP
+It supports bounded updates where network topology change updates are only sent to routers affected by the change, so it's more efficient. 
+It doesn't flood information everywhere when it doesn't need to. 
+And messages are sent using multicast rather than broadcast
+
+perform equal cost load balancing on up to 4 paths by default. You can manually increase that up to 16
+paths that it can load balance over if you want to.
+
+EIGRP is also the only routing protocol that can also do unequal cost load balancing. So all of the
+other routing protocols, if there's multiple paths that have got the same metric, then they can load balance
+over those equal cost paths. But EIGRP, it can have multiple paths with unequal metrics, and you can
+configure it to load balance over those different paths
+
+To enable it, we say 'router eigrp' and then an AS number
+
+at global config.
+
+The AS is the Autonomous System number, meaning an independent administered domain. EIGRP routers need
+to have the same AS number to peer with each other.
+So you could have, say, two different organizations that have got an extranet with each other. So they're
+connected, and they're both using EIGRP internally. In that case, they would use two different AS numbers.
+So Organization A would have its AS number, and it would have its internal routes. Organization B would
+have a different AS number, and it would have its own internal routes. And EIGRP between the two organizations,
+even though it's physically connected, would not peer. They wouldn't be sharing information with each other.
+
+the router ID
+EIGRP routers identify themselves to other EIGRP routers using a router ID, and this is in the form of an IPv4 address.
+The router ID will default to being the highest IP address of any loopback interfaces configured on
+the router, or if there's no loopbacks, then it will be the highest other IP address on a physical interface.
+it's recommended to either use the loopback interface, or another way that you can do it is to manually specify a router ID.
+
+To view what the router ID is, we can do a 'show ip protocols'. So in the output of that command,
+for example, my router ID is tend or 10.0.3.1.
+If I did have a loopback, then even if the loopback interface is lower than the IP address on
+a physical interface, it will be the router ID.
+the EIGRP router ID. It needs the EIGRP process to be restarted before it will pick up the new IP address.
+you could disable and then re-enable EIGRP, or you could reboot the router.
+That will force it to come up with that loopback address as the router ID.
+
+If you want to manually specify the router ID, the command is under the EIGRP process,
+'eigrp router-id' 
+and then the router ID that you want to use, that has to be in the format of an IPv4 address.
+ this isn't actually an IP address. It's just a router ID, but it uses the format of an IP address
+'eigrp router-id 2.2.2.2'
+
+
+===========================   OSPF  ======================
+
+ Open Shortest Path First Protocol.
+it is an IGP -  Interior Gateway Routing Protocol
+It's a Link State routing protocol 
+
+
+---------  characteristics of OSPF
+
+it supports large networks and has very fast convergence time. 
+Messages are sent using multicast rather than broadcast, so it's more efficient
+It is supported on all vendors' equipment, and there's plenty of support for OSPF, supported by everybody,
+loads of engineers understand it and are used to working on it, lots of documentation on the Internet, etc.
+
+Link State routing protocols, each router describes itself and its interfaces to its directly connected neighbors.
+This information is then passed unchanged from one router to another. 
+OSPF routers use LSA, Link State Advertisements, to pass on the routing updates.
+
+when you enable OSPF on a router, the first thing it will do
+will discover its directly connected neighbors and form adjacencies with them.
+They will then share routes with each other
+by flooding the Link State Database (LSDB). Once all of the potential routes are learned, the router will then compute
+the shortest path and the best routes will be installed in the routing table.
+After that, the routers will respond to network changes, for example, if any new links are added, or if any links go down. 
+
+Our different packet types that are used in OSPF,
+first one is the Hello packet.
+As soon as you enable OSPF on an interface, it will start sending out and listening for Hello packets.
+And when it receives a Hello packet on that interface, it will form an adjacency with the neighbor.
+Once the routers have formed adjacencies, they will send DBDs to each other. DBD is the Database Descriptor.
+That includes information about all the networks that the routers know about. If the router is missing
+information about any of the networks it received in the DBD from a neighbor, it will send that neighbor
+an LSR, which is a Link State Request, asking for more information.
+The router will reply back with an LSA, a Link State Advertisement.
+
+Other packet types we can have is an LSU, a Link State Update. That contains a list of LSAs which should be updated.
+This is used during flooding.
+So for example, if a new link was added or if a link went down,
+that information needs to get flooded everywhere with an LSU.
+And finally, we have the LSAck, which is the acknowledgement message.
+Whenever a router receives a message from a neighbor, it will send an acknowledgement back.
+So, this makes sure that the protocol is reliable.
+If a router sends out a packet and it doesn't get an acknowledgement, it will resend it.
+
+
+-------------- basic configuration of OSPF 
+
+enable OSPF, the top level command at global config is 'router ospf' and then, a Process ID.
+(config)# router ospf 1
+
+It's not normal to have different Process IDs on the router.
+even though the Process ID is different on the routers, that's a locally significant number. It does
+not have to match on both sides, so the routers will still form adjacencies.
+
+interfaces are in two different processes.
+So they're going to have separate Link State Databases, and information is not going to be shared between the two sides.
+So R1 and R3 will not learn routes to each other because both sides are in different process IDs on router R2.
+It is absolutely not normal to do that. Very rare that you would see this.
+
+What is more normal is where all the routers in your network are all using the same Process ID number
+we configured router OSPF and usually we'll use a Process ID of 1. The next command to use is the network command
+network, and then the network address, space, and then the wildcard mask, which is the inverse of the subnet mask, and then
+specify the area. If you've got a small network, you can just put everything in area 0.
+'network 10.0.0.0 0.0.255.255 area 0'
+
+If your subnet mask was 255.255.255.252, your wildcard mask would be 0.0.0.3
+
+show all of the OSPF commands in your running config, whether they're under the main OSPF part of the configuration
+or at the interface level.
+#sh run | section ospf
+
+'show ip protocols'
+will show all the routing protocols that are running on the router. 
+
+'show ip opf interface brief'
+will show which interfaces have got OSPF enabled on them on this router,
+the Process ID for the interface, the area, the IP address and mask, the cost for the metric, and how
+many neighbors are reachable through that interface. 
+
+'show ip ospf neighbor'
+The command to check that is  check is that it has been able to form adjacencies.
+
+The next thing that happens with OSPF operations is the routers will flood the Link State Database (LSDB). To see if
+routes have been learned from OSPF, you can use the 
+'show ip ospf database'
+
+The next thing that happens is the routers will look at all the available possible paths, and they will
+decide which is the best path using the Shortest Path First algorithm, and put that best path into the routing table.
+So, next command to verify is 
+'show ip route' 
+and check that you've got OSPF routes in the routing table.
+
+
+-------- Advanced OSPF topics of the router ID, how to configure passive interfaces, and default injection
+
+-> router ID
+OSPF routers identify
+themselves to other OSPF routers using an OSPF router ID, which is in the form of an IPv4 address.
+It defaults to using the highest IP address of any loopback interfaces configured on the router, or if there's
+no loopback interfaces, it will use the highest other IP address.
+Best practice is to use a loopback or manually set an ID, so it won't change, makes things more stable
+Router ID. We can verify that by using the 'show ip protocols' command.
+To update the Router ID in a production environment,
+you would just wait until the next reboot because disabling and re-enabling OSPF would be disruptive
+
+if you want to manually configure it is under the 'router ospf' configuration, 'router-id', and
+then the ID that you want to use, in the format of an IP version 4 (IPv4) address
+(config-router) router ospf 1
+(config-router) router-id 2.2.2.2
+
+
+-> passive interfaces
+if you configure a passive interface, it will be advertised in OSPF. So other routers will learn how to get to that network,
+but the interface itself will not try to form any adjacencies, and it won't give out any internal information.
+
+we have to include it as a passive interface, so that your other routers will learn how to get to that loopback address
+we want our other internal routers to know how to get to that network, but we don't want to be giving out
+any of our own internal information out on that link
+(config)# router ospf 1
+(config-router) passive-interface loopback 0
+(config-router) passive-interface f2/0
+
+-> route injection
+this is configured in a similar way as RIP
+R4 is connected out to an Internet Service Provider (ISP), so we configure a static default route on R4 with the command
+'ip route 0.0.0.0 0.0.0.0 203.0.113.2'  203.0.113.2 it is the next hop which is the internet
+We don't want to have to configure static routes to get out to the Internet on all of our routers,
+we want them to learn that dynamically,
+so we're going to inject it into the OSPF process on router R4. The command to do that is 
+'router ospf 1'
+and then, 
+'default-information originate'
+
+To verify it do a 
+'show ip route' on your other routers
+check that they do have a default route to the 0.0.0.0 network.
+This will show up as an external route in OSPF.
+What an external route is, it doesn't mean it's come from somewhere outside your organization.
+What it means is that the route was redistributed into OSPF. 
+
+
+---------------  OSPF areas
+
+Link State routing protocols, every router learns the full picture
+of it's part of the network, including every router,
+its interfaces, and what they connect to, and this can cause issues in large networks.
+there is going to be a lot of routes in its routing table and that can take up too much memory.
+Also, if there's a change in the network, like a new link being added or a link going down, that causes
+all routers to reconverge which takes time and CPU resources.
+
+OSPF supports a hierarchical design, which segments large networks into smaller areas.
+Each router maintains full information about its own area, but only summary information about other areas.
+So the routers are going to have less routes in their routing table and if a new link comes up or goes down in another area
+We've got the transit area, also known as the backbone or Area 0.
+It does not generally contain end users when we've got a multiarea network. And then we've got our regular areas,
+also known as our nonbackbone areas, which hang below Area 0.
+They're used to connect end users to the transit area. By default,
+all transit traffic goes through the transit area.
+Area 0 it is the backbone router
+your backbone routers will have the full Link State Database (LSDB) for all of the other links that are also in Area 0.
+
+ABR, our Area Border Router. Routers which have interfaces and multiple areas are ABRs.
+hey separate the flooding zones. This is what really segregates our network into the different areas and compartmentalizes our network.
+So if we have a link goes up or goes down in that area, it's going to keep the information just in that one area. It doesn't impact our other areas. 
+The ABR is also where we always do our summarization in OSPF
+full Link State Database (LSDB) for Area 0, so it knows about all the individual networks in Area 0, and it also has the full Link
+State Database (LSDB) for Area 1. Our ABR on the right here, it will have the full LSDB for Area 0
+and for Area 2, but it only has summary information for Area 1. Ideal design is to have each ABR connected
+to two areas only, the backbone and another normal area. An important point is that your ABRs do
+not automatically summarize. You need to do this manually, and if you don't manually configure summarization,
+all routes will be flooded everywhere
+
+so a route that was a learned from an ABR which is in another area, will show up as 
+type 'O IA'
+for inter area routes.
+
+ASBR, an Autonomous System Boundary Router.
+So ABR is an Area Border Router, ASBR is Autonomous System Boundary Router. What and ASBR is
+it means that on that router, it's running OSPF and we're redistributing from another source into OSPF.
+So maybe, we're also running EIGRP or RIP on that router. We're taking our EIGRP or RIP routes and we're
+redistributing them into OSPF, so they'll also be advertised through our OSPF neighbors, or maybe it's
+a static route that we're redistributing into OSPF.
+
+Our redistributed routes show up as external route. So an external route
+does not mean it's outside this enterprise, outside this organization. It literally means it was redistributed
+into OSPF and if you look at the routing table, this will show up as a type 'O*E' either E1 or E2 for an external route.
+
+
+
+------------ OSPF cost metric works and how it's based on interface bandwidth by default
+
+'speed' command 
+it's the 'speed' command that you can use to change the default physical speed of the interface.
+The rate that Ethernet interfaces physically transmit at is set by the 'speed' command.
+GigabitEthernet interfaces transmit at 1000 megabits per second (Mbps) by default. 
+A thousand megabits per second is 1 gigabit per second
+FastEthernet interfaces transmit at 100 megabits per second by default.
+if you use the 'speed 10' command on a FastEthernet interface and it supports it, it will
+physically transmit at 10 megabits per second instead.
+it has to match on both sides of the link.
+
+'clock rate' command
+this works on Serial interfaces. Serial interfaces used to be used very commonly on WAN links
+Serial interfaces transmit at 1.544 megabits per second by default. 
+That is the speed of a T1 interface that used to be commonly used in the United States.
+'clock rate' command to set a transmit rate in kilobits per second (Kbps).
+this will change the physical speed of the interface,  it has to match on both sides of the link.
+
+'bandwidth' command
+'bandwidth' does usually match physical transmission rate of the interface. It will do by default
+and normally, as the administrator, we want to leave it at that as well.
+The bandwidth setting on an interface does not affect the physical transmission rate, that is set by the 'speed'
+or the 'clock rate'.
+If you set a bandwidth of 50 megabits per second on a FastEthernet interface, it will still transmit
+at 100 megabits per second.
+it affects software policy on the router, such as which path will be selected by our routing protocols,
+EIGRP or OSPF, or how much bandwidth will be guaranteed through a traffic type by QoS.
+you normally want the bandwidth to actually match the physical interface. 
+you don't have to have the matching. Sometimes, you want to override what would happen by default.
+So you don't do this very commonly, but it is possible to set the bandwidth to be different than the
+actual bandwidth on the physical interface if you want to influence software policy.
+
+
+----------- OSPF metric COST 
+
+In a multiple area OSPF network, ABRs know the information for each area
+that they are connected to, so that will normally be two areas. 'Area 0' (the backbone)
+and also the normal area that they're connected to.
+
+For destinations in a different area, a router looks at all available links to get to the ABR
+and chooses the path with the lowest overall cost to the ABR.
+It's then up to the ABR to choose the best path onwards from there.
+
+ensure that the cost is set the same on the interfaces on both sides of the link,
+or you can get asymmetric routing.
+
+the cost would be 50 (the cost to R1) plus 10, (the cost of the link itself)
+
+The cost for OSPF is automatically derived from the interface bandwidth.
+So a higher bandwidth interface will be automatically preferred.
+The way that the cost is calculated is it's the reference bandwidth divided by the actual interface bandwidth.
+And the default reference bandwidth is 100 megabits per second.
+So what this means is if you've got a FastEthernet link, that would default to a cost of one.
+Because FastEthernet, the default bandwidth on there is 100 for 100 megabits per second.
+We divide 100 by 100, that gives us a cost of one. On a serial interface, like a T1 in the example here,
+the bandwidth there is 1.544 megabits per second. So that will default to a cost of 64 because 100 divided by 1.544 is 64.
+
+OSPF will treat all interfaces of 100 megabits per second or faster as equal,
+the best possible cost is one. We don't have like a 0.1 cost.
+So FastEthernet, Gigabit Ethernet, and 10 Gigabit Ethernet, et cetera, 40 Gigabit Ethernet, 100 Gigabit Ethernet,
+they will all default to a cost of one
+
+using the old default reference bandwidth, they'll all be treated the same equal cost by OSPF.
+So we want to set the reference bandwidth to a higher value.
+(config) router ospf 1
+(config-router) auto-cost reference-bandwidth 100000
+
+if you set it to 1000, for example, that would mean that Gigabit Ethernet interfaces
+will have a cost of one, FastEthernet will get a cost of 10.
+when you set the reference bandwidth, you need to do it the same on all routers
+so they're all using a consistent metric.
+
+you might want to manipulate this,for example say you've got a high latency satellite link
+which has higher bandwidth but you want to prefer a lower bandwidth interface.
+
+you can manipulate that by manually changing the bandwidth or the OSPF cost on interfaces.
+It's recommended to use cost because the bandwidth setting can affect many features
+other than OSPF, such as QoS.
+
+
+------------ how OSPF routers form adjacencies with each other and build their Link State Databases.
+
+Most packets in a production network are going to be TCP or UDP, so will be marked as either protocol number
+6 or protocol number 17. TCP - 6 ; UDP - 17
+But for our OSPF routing protocol packets, they use a protocol number of 89.
+
+starting off with the Hello packets. OSPF routers discover each other and form adjacencies
+with each other via the Hello packets. They send Hello packets out
+each interface where where OSPF is enabled, except passive interfaces.
+passive interfaces, we don't want to be sending information out there, sharing updates about our internal networks.
+you're going to have passive interfaces configured where you're connected to a third party
+that you don't want to be sharing your routing information with. enable passive interfaces on our loopback interfaces as well.
+
+the way that we enable OSPF on an interface is by enabling OSPF globally,
+and then we enter a network statement, which includes the IP subnet that is on that particular link.
+When we do that, it turns on OSPF in the interface.
+It's going to start sending and listening for Hellos. When these Hello packets are sent out, they're
+they're multicast to the multicast address 224.0.0.5, that is designated as the all OSPF routers' multicast
+address, and Hello packets are sent every 10 seconds by default.
+
+The contents of the Hello packet, we've got the router ID
+that's a 32-bit number, looks just like an IPv4 address that uniquely identifies each OSPF router
+
+Next thing in the Hello packet is a list of neighbours. So a list of adjacent OSPF neighbours that this router has received
+a Hello packet from.
+
+and so on...
+
+
+===================== CDP ==================================
+
+Cisco Discovery Protocol (CDP) and Link Layer Discovery Protocol (LLDP)
+They're both very similar protocols.
+
+CDP, Cisco Discovery Protocol, is a Cisco proprietary Layer 2 protocol, and it is used to share information
+with other directly connected Cisco equipment, such as the operating system and the IP address.
+That information will be shared between connected devices. That aids in troubleshooting by allowing administrators
+to map out how Cisco devices are connected to each other.
+
+CDP is enabled by default on most Cisco equipment. Not just on routers and switches, also on the firewalls, and even things like software,
+like Cisco Unified Communications Manager (UCM) which is used to control IP phones, and even the IP phones as well will run CDP.
+
+CDP works at Layer 2, so it's not necessary for the device to have an IP address on it for it to be detected by its neighbors.
+
+if you want to disable it, 
+'no cdp run'
+To turn it back on again it's 
+'cdp run'
+
+That's done at global configuration. A reason you would maybe want to disable CDP is it can be seen as a security concern.
+(config-if) no cdp enable   -> this is for a interface,  will now stop sending out CDP information on that particular interface
+(config) no cdp enable      -> If I'm in a highly secured environment and I just want to completely disable CDP on the switch
+
+# show cdp
+# show cdp neighbors
+# show cdp neighbors detail
+
+you've got a switch on the edge of your network, and you want CDP to be enabled on the internal facing interfaces. 
+You want to disable it on the external facing interface so you don't give up information to another organization.
+you can do a no cdp enable at the interface level
+
+If you do have a duplex mismatch, then CDP, Cisco Discovery Protocol, should detect that
+
+========================== LLDP ====================================
+
+LLDP is an open standard. So, it's supported on most vendors' devices, and it provides similar information to CDP.
+
+LLDP is only supported on physical interfaces.
+
+CDP is also supported on virtual sub-interfaces as well.
+
+With LLDP, it can only discover up to one device per port. CDP is able to discover multiple devices
+per physical port because it does support those virtual sub-interfaces. 
+
+LLDP can discover Linux servers, CDP cannot.
+
+(config) lldp run
+(config) no lldp run
+(config-if) no lldp transmit
+(config-if) no lldp receive
+# show lldp
+# show lldp neighbors
+# show lldp neighbors detail
 
 
 ========================= FIREWALL ============================
@@ -752,7 +1626,6 @@ so I'll allow this traffic to come through." If your traffic had been initiated 
 it would not allow that traffic. Okay, so that's how stateful firewalls work
 
 
-
 =================== DATA CENTER ==================================
 
 UCS stands for Unified Computing System, as well as the blade server that you see here. Cisco also have standard rackmount servers as well.
@@ -769,4 +1642,127 @@ A lot of modern companies still are using traditional PBXs, but IP PBXs are gett
 Cisco's Unified Communications Manager is one of the most popular IP PBXs 
 
 
+=========== CISCO DEVICE MANAGEMENT ==============================
+
+different memory locations on your device.
+
+There's four built-in memory locations.
+
+First ROM, the Read Only Memory.
+Flash. On older devices, that will be installed in the cache on the motherboard. On newer devices, it's a removable CompactFlash card.
+NVRAM, the Non-Volatile RAM
+RAM the normal Random Access Memory.
+You can also use an external USB memory stick plugged into the device as well.
+
+ROM has got two main functions,
+First is the Power On Self Test. The POST test will check for any problems with the hardware.
+It will then load the bootstrap, and the bootsrap will look in Flash for an IOS software image to load next.
+get instructions, just search in Google for 'Cisco ROMMON Recovery' in case is not boot up and to recover the device
+
+
+To make sure that you get the newer image, the command to use is
+'boot system'
+'flash' 
+and then the system image name. That's a global configuration command. 
+
+
+When the system has finished loading the IOS system image from Flash, it will then load the start- up config, configuration file from NVRAM, 
+and the saved start-up config then becomes the current running-config in RAM.
+
+
+Whenever you enter a command in IOS, it takes effect immediately and goes into the running-config in RAM. To make your changes permanent across a reboot,
+'copy running-config start-up config' command
+that copy it into NVRAM, which will be used the next time the system boots up.
+
+
+VLAN database
+That file is the 'vlan.dat' file.
+It's just on a switch where it saves the VLAN information, and that is saved in either Flash or NVRAM, depending on the model of the switch.
+
+
+TFTP server
+load a system image and/or startup-config from an external TFTP server rather than from Flash or NVRAM.
+That is not recommended, though, because the device will not be able to boot if it loses connectivity to that TFTP server
+So, the only reason you would ever really do that is if you want to load a new version of the system
+image and there's not enough Flash memory capacity on your device to store that.
+Then, you can save it to an external TFTP server instead and boot from there. 
+
+
+
+-------------------factory reset and password recovery
+
+factory reset 
+
+the enable prompt (#), we use the 
+'write erase' command
+That will erase the startup-config. You do that, you then reload the device, and it will boot up with a blank configuration.
+There is no startup-config, so the Setup Wizard will then run.
+
+
+configuration register. 
+That is used to change the way that the router boots from the default.
+You can use the 
+'config-register' command in global configuration mode, or if you're at the ROMMON prompt to where the router or a switch hasn't completed booting yet, 
+'confreg' command.
+
+For example, we could use 'config-register 0x2142' for that setting at global config or 'confreg 0x2142' if we were at the ROMMON prompt.
+three most useful.
+First is 0x2102. That should be the default. The device will boot normally when that is the setting. 
+Next one is 0x2120, will boot into ROMMON mode.
+Lastly, 0x2142 will ignore the contents of NVRAM while booting, so it will ignore the startup-config.
+
+
+-----------------password recovery  --google
+
+Always google the steps , because you do once in a while
+
+whatever kind of device is that you need to recover, it will be very, very similar to those instructions below
+
+You need to reboot it.
+Then while it is rebooting, press the break sequence on the keyboard. That is commonly Ctrl + Break
+during the first minute that the device is powering on, and that will break you into the ROMMON prompt. You then enter the command 
+'confreg 0x2142' at the ROMMON prompt, which says to ignore the startup-config on boot
+The startup-config is still there, and the full configuration, everything that was configured on that device is there as well
+but the router is not going to use that startup-config when it boots up, so you don't need to know what the enable secret is. 
+You then enter 'reset' at the ROMMON prompt to boot the device. The router
+will boot up with no configuration, so it will enter the Setup Wizard. You then type 'no' to bypass that.
+You then enter enable mode with the 'enable' command.
+Next thing you need to do is copy the startup-config to the running-config. Do not forget that step. If you forget that step and you do everything else correctly you're going to end up factory resetting that device
+then enter a new enable secret in global configuration mode to overwrite the old one, and that will go into the current running-config. 
+Then enter 'config-register 0x2102', so the router will boot normally on the next restart.
+
+
+'enable password' is really a legacy command,
+'enable secret' is the new form of doing it.
+When you do look at the running-config, 'enable password' is unencrypted by default. 'enabled secret' is always in an encrypted form.
+So, that could be a security concern. If you've enabled both 'enable secret' and the 'enable password', then the 'enable secret' overrides the 'enable password'.
+
+
+
+==================   backing up the IOS system image and your config file on your router or switch  =======================
+
+You can back up either to an external FTP, or TFTP server, or to a USB stick, or you can back up to Flash in the device.
+copy flash tftp
+copy running-config tftp
+copy running-config usb 
+
+If you do want to restore an old version of the configuration file, you can't just copy it into the startup or running-config because if you do that, it will be merged.
+It's not going to replace it
+the way that you do that is you, first off, factory reset the device.
+You then copy that old config into the startup-config and then reboot, and then you're back with that old config.
+
+
+
+========================  upgrade the IOS system image on your Cisco router or switch ============================
+
+First thing that you need to do is get the new software image, so you get that from the Cisco Website
+https://software.cisco.com.
+
+download it from the Cisco website, and then copy it onto your TFTP server.
+copy tftp flash
+Then from the TFTP server, you're going to download it to Flash on the device.
+Once you've got it on Flash, then either delete the old image, leaving just the new one there and the device
+will now boot up from the new image, or if you want to keep both images on there just in case you need
+to fall back to the old one, then to make sure that it uses the new image
+use the 'boot system' command.
 
