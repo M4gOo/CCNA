@@ -724,17 +724,51 @@ So you don't do this very commonly, but it is possible to set the bandwidth to b
 actual bandwidth on the physical interface if you want to influence software policy.
 
 
+----------- OSPF metric COST 
 
+In a multiple area OSPF network, ABRs know the information for each area
+that they are connected to, so that will normally be two areas. 'Area 0' (the backbone)
+and also the normal area that they're connected to.
 
+For destinations in a different area, a router looks at all available links to get to the ABR
+and chooses the path with the lowest overall cost to the ABR.
+It's then up to the ABR to choose the best path onwards from there.
 
+ensure that the cost is set the same on the interfaces on both sides of the link,
+or you can get asymmetric routing.
 
+the cost would be 50 (the cost to R1) plus 10, (the cost of the link itself)
 
+The cost for OSPF is automatically derived from the interface bandwidth.
+So a higher bandwidth interface will be automatically preferred.
+The way that the cost is calculated is it's the reference bandwidth divided by the actual interface bandwidth.
+And the default reference bandwidth is 100 megabits per second.
+So what this means is if you've got a FastEthernet link, that would default to a cost of one.
+Because FastEthernet, the default bandwidth on there is 100 for 100 megabits per second.
+We divide 100 by 100, that gives us a cost of one. On a serial interface, like a T1 in the example here,
+the bandwidth there is 1.544 megabits per second. So that will default to a cost of 64 because 100 divided by 1.544 is 64.
 
+OSPF will treat all interfaces of 100 megabits per second or faster as equal,
+the best possible cost is one. We don't have like a 0.1 cost.
+So FastEthernet, Gigabit Ethernet, and 10 Gigabit Ethernet, et cetera, 40 Gigabit Ethernet, 100 Gigabit Ethernet,
+they will all default to a cost of one
 
+using the old default reference bandwidth, they'll all be treated the same equal cost by OSPF.
+So we want to set the reference bandwidth to a higher value.
+(config) router ospf 1
+(config-router) auto-cost reference-bandwidth 100000
 
+if you set it to 1000, for example, that would mean that Gigabit Ethernet interfaces
+will have a cost of one, FastEthernet will get a cost of 10.
+when you set the reference bandwidth, you need to do it the same on all routers
+so they're all using a consistent metric.
 
+you might want to manipulate this,for example say you've got a high latency satellite link
+which has higher bandwidth but you want to prefer a lower bandwidth interface.
 
-
+you can manipulate that by manually changing the bandwidth or the OSPF cost on interfaces.
+It's recommended to use cost because the bandwidth setting can affect many features
+other than OSPF, such as QoS.
 
 
 
