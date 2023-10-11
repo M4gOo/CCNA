@@ -1771,4 +1771,74 @@ use the 'boot system' command.
 ========================  VLANs =====================================
 
 
+----------- LAN 
+
+Local Area Networks (LANs). So, that could be for a single building
+or it could be several buildings within a few hundred meters of each other on the same local campus.
+the network topology is split into access, distribution, and core layers
+when we're doing the design. The layers have their our own design principles and characteristics
+
+access layer switch is where your end hosts plug in. in the real world, you would have multiple hosts plugged into the same switch.
+
+Servers will often have dual NICs to give them some extra redundancy.
+So they will connect into a pair of redundant access layer switches,
+and your client access security measures, such as port security  are enabled at the access layer.
+
+The next layer up is the Distribution Layer.
+the level above the access layer, we have our distribution layer switches, and the access layer switches uplink to the distribution layer switches. 
+the access layer switches are not usually connected to each other. They connect upstream to the distribution layer switches.
+The distribution layer switches serve as an aggregation point for the access layer and provide additional
+scalability in our Local Area Network.
+They are typically deployed in redundant pairs.
+at the distribution layer, most software policy, such as Quality of Service (QoS) policies, is enabled at the distribution layer.
+
+The next layer we have up is the Core Layer.
+deployed in redundant pairs 
+is designed for speed and resiliency.Software policy (QoS) slows the switch down 
+
+Collapsed Distribution and Core layer.
+That is common, because smaller campuses don't need the scalability of three separate layers.
+So in most cases, a Collapsed Distribution and Core layer is used where the Distribution and Core layer
+functions are performed on the same hardware device.
+
+
+---------------- Spine and Leaf datacenter network design
+
+in modern data centers, there's a trend nowadays where we see a lot more traffic going in East and West bound direction,
+and what I mean by that is between the actual servers themselves in the data center. The reason for
+that is that data centers are getting bigger. There's a lot of virtualization now,
+so many virtual servers and those servers might be clustered where an app is spread across multiple
+different servers and all of those servers need to talk to each other.
+We also might have an application, for example, which has got a web-based front end on a server, and that's
+talking to a backend database on another server as well.
+So again, that traffic, rather than going North and South bound through the different layers,
+would be going East-West bound between the different servers themselves.
+
+We don't have our servers connected there.
+Our servers are connected into our Leaf layer switches and we have got a mesh between.
+So all of our Leaf switches are connected to all of our Spine switches,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
