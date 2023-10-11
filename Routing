@@ -404,6 +404,22 @@ Which is the biggest number?
 It's the/30.
 
 
+=================== MTU ==========================
+
+
+MTU is the Maximum Transmission Unit, and that is the maximum size a pocket can be to be sent across a link on a router.
+If the router needs to send a larger packet than the MTU size, it will fragment it into smaller packets.
+Normally, we just leave the default MTU size of 1500 bytes on Ethernet interfaces, but occasionally
+this needs to be changed, if it's causing an issue with a particular application. It's quite a rare thing to happen.
+
+You can set the 'interface MTU' which affects all packets, and/or an 'interface IP MTU', which affects only IP packets.
+This is a setting on the router's interface.
+
+most commonly, we configure the IP MTU. 
+
+show interface GigabitEthernet 0/0', that will show the interface MTU. 
+To see the IP MTU, it's 'show IP interface' and then the interface number.
+
 
 =========================== RIP =========================
 
@@ -769,6 +785,47 @@ which has higher bandwidth but you want to prefer a lower bandwidth interface.
 you can manipulate that by manually changing the bandwidth or the OSPF cost on interfaces.
 It's recommended to use cost because the bandwidth setting can affect many features
 other than OSPF, such as QoS.
+
+
+------------ how OSPF routers form adjacencies with each other and build their Link State Databases.
+
+Most packets in a production network are going to be TCP or UDP, so will be marked as either protocol number
+6 or protocol number 17. TCP - 6 ; UDP - 17
+But for our OSPF routing protocol packets, they use a protocol number of 89.
+
+starting off with the Hello packets. OSPF routers discover each other and form adjacencies
+with each other via the Hello packets. They send Hello packets out
+each interface where where OSPF is enabled, except passive interfaces.
+passive interfaces, we don't want to be sending information out there, sharing updates about our internal networks.
+you're going to have passive interfaces configured where you're connected to a third party
+that you don't want to be sharing your routing information with. enable passive interfaces on our loopback interfaces as well.
+
+the way that we enable OSPF on an interface is by enabling OSPF globally,
+and then we enter a network statement, which includes the IP subnet that is on that particular link.
+When we do that, it turns on OSPF in the interface.
+It's going to start sending and listening for Hellos. When these Hello packets are sent out, they're
+they're multicast to the multicast address 224.0.0.5, that is designated as the all OSPF routers' multicast
+address, and Hello packets are sent every 10 seconds by default.
+
+The contents of the Hello packet, we've got the router ID
+that's a 32-bit number, looks just like an IPv4 address that uniquely identifies each OSPF router
+
+Next thing in the Hello packet is a list of neighbours. So a list of adjacent OSPF neighbours that this router has received
+a Hello packet from.
+
+and so on...
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
