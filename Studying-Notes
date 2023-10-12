@@ -1918,6 +1918,12 @@ When we do have redundant devices in the network, we're going to have redundant 
 If their main default gateway goes down, we're going to have another default gateway that they can failover to
 the most popular of the FHRP protocols in a Cisco environment is HSRP, the Hot Standby Router Protocol
 
+So our backup route is also going to be a static default route 0.0.0.0 0.0.0.0
+this backup route, we give that a higher administrative distance of 5 because I don't want to load balance my Internet bound traffic
+The lower the administrative distance the better, so the second route with an AD of 5 is only going to come into effect if the first one goes down.
+
+
+
 
 
 
