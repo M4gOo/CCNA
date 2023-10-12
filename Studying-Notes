@@ -1868,9 +1868,18 @@ send the traffic to.
 (config) switchport mode trunk
 
 
+DTP, the Dynamic Trunking Protocol. If two Cisco switches are
+cabled together, it's possible for them to automatically negotiate a trunk connection on those ports
+they're connected with using Cisco's proprietary DTP
 
 
-
+VTP, the Vlan Trunking Protocol. It allows you to add, edit, or delete
+VLANs on switches which are configured as VTP servers, and then other switches which are configured
+as VTP clients, will synchronize their VLAN database with the servers.
+if later on, you don't need the Sales VLAN anymore, you can delete it on a VTP server and it
+will be automatically deleted on all of the clients.
+Or if maybe, it was VLAN number 10 before and you change it to VLAN number 100, that information
+would also be synchronized across all of your switches.
 
 
 
