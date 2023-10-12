@@ -1819,6 +1819,55 @@ Our servers are connected into our Leaf layer switches and we have got a mesh be
 So all of our Leaf switches are connected to all of our Spine switches,
 
 
+You switches flood broadcast traffic everywhere, including between different IP subnets, and that raises
+performance and security concerns.
+We can increase performance and security in the LAN by implementing VLANs on our switches.
+VLANs segment the LAN into separate broadcast domains at layer 2.
+
+
+access ports are configured on switch interfaces where end hosts are plugged in,
+and access ports are configured with one specific VLAN.
+The configuration is all on the switch. The end host is not VLAN aware,
+The default VLAN is VLAN 1. So by default, all ports on a switch are in VLAN 1
+#create vlan
+(config) vlan 10    is the number we're going to use for, could be 20, 30, so on
+(config-vlan) name <Vlan-name>
+# configure switch port
+(config) interface FastEthernet 0/1
+(config) switchport mode access
+(config) switchport access vlan 10
+(config) interface range FastEthernet 0/2 - 5
+(config) switchport mode access
+(config) switchport  access vlan
+
+show vlan brief
+
+If you want to see information specific to an individual port, you can say 
+show interface fastEthernet0/1 switchport
+
+
+what about the links between switches?
+we need PCs in different VLANs to be able to talk with each other across different switches,
+and the way we do that is by configuring a trunk port.
+The protocol which used for our trunking is Dot1Q.
+So on the links between switches, rather than configuring them as an access port which can only carry traffic
+for one VLAN, we configured them as a trunk port which will carry traffic for all of our VLANs.
+when the switch sends the
+traffic to an end host, it removes the Dot1Q VLAN tag because our end hosts are not VLAN-aware.
+They don't need to see that tag, it confuse them.
+
+a special case of end hosts is virtualized hosts, like VMware or Microsoft HyperV, where there's
+virtual machines in different IP subnets on the host. So that one host, that's maybe running a virtual
+machine for Engineering, it's also running a virtual machine for Sales.
+So in that case, you need to trunk the VLANs down to that host so it knows which virtual machine to
+send the traffic to.
+
+(config) interface FastEthernet 0/24
+(config-interface) description Trunk to SW2
+(config) switchport trunk encapsulation dot1q 
+(config) switchport mode trunk
+
+
 
 
 
