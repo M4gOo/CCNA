@@ -1883,15 +1883,40 @@ would also be synchronized across all of your switches.
 
 
 
+============================ DHCP ======================
+
+DHCP and more convenient than it is to manually assign IP addresses to everything.
+We can configure a Cisco router to be a DHCP server, also support an external DHCP server,
+a Cisco router can be a DHCP client itself and get its own IP address via DHCP.
+
+DHCP, the Dynamic Host Configuration Protocol. It's a client/server protocol
+that automatically provides a host with its IP address and other related configuration
+information like its subnet mask and default gateway.
+your routers, your switches, and your firewalls, are not good candidates to be DHCP clients.
+They're mission-critical devices that are required for the running of the network and for its services to function.
+Their IP addresses are going to be fixed.
+
+in Mac, 'ifconfig' to see the IP address and subnet mask
+'netstat -rn' to see the default gateway.
+
+linux
+ 'ip route show' default gateway.
+ip a  for ip and subnetmask
 
 
+================   HSRP, the Hot Standby Router Protocol ======================
+
+This is where we put extra devices into the network, so that we don't have any single points of failure. 
+If any single one of our network infrastructure devices, like our router or switch fails, there's another one sitting there that can take over its load.
+It makes our network more resilient
 
 
+-------- First Hop Redundancy Protocols 
 
-
-
-
-
+First Hop Redundancy Protocols.
+When we do have redundant devices in the network, we're going to have redundant default gateways for our end devices.
+If their main default gateway goes down, we're going to have another default gateway that they can failover to
+the most popular of the FHRP protocols in a Cisco environment is HSRP, the Hot Standby Router Protocol
 
 
 
