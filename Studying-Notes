@@ -1936,6 +1936,45 @@ another link for vlan2, in case of a failure in link used by vlan2,  can be use 
 congestion.
 
 
+---------- etherchannel
+
+we still need to consider having two links between two switches for redundancy that is if one
+link fails the other would be available to take over the second link is basically a backup in
+case the first link fails
+But if you have a lot bandwith ( example giving every link has capacity of 1Gbps and the traffic is over 2Gbps)
+remember one of the link is just for redundacy, it is off.
+Etherchannel is a technology that takes
+two or more physical links and bundles them into a single logical link
+so back in that case where we had two links between a switch we could
+configure them as an ether channel and they would pretend or act like they're a
+single link with up to two of bandwidth and because it appears as a single link
+spanning tree wouldn't block anything so both physical links can be active at once
+if one physical link fails the ether channel still works as normal with diminished bandwidth
+those are named by port channel or channel group by Cisco, other vendors LAG or Aggregated Ethernet AE
+
+
+================== switch security =======================
+
+Dynamic ARP Inspection (DAI) is a security feature in MS switches that protects networks 
+against man-in-the-middle ARP spoofing attacks. DAI inspects Address Resolution Protocol (ARP) packets on the LAN 
+and uses the information in the DHCP snooping table on the switch to validate ARP packets
+
+802.1x Identity Based Networking
+802.1X defines authentication controls for any user or device trying to access a LAN or WLAN. 
+The 802.1X. 802.1X provides an authentication framework that allows a user to be authenticated by a central authority.
+authentication server is typically an EAP
+instead leave all access, first put the pc on quarantine so it can be update, check for malwares, so on
+
+
+
+
+
+
+
+
+
+
+
 
 
 
