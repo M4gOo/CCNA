@@ -1924,7 +1924,16 @@ The lower the administrative distance the better, so the second route with an AD
 
 
 
+==========================   Spanning Tree Protocol (STP)  ===================
 
+Spanning Tree, which is a Layer 2 technology which prevents loops across your Layer 2 switched network.
+imagine 3 switches connected to each other, if one sending broadcast it will hit all switches and those swtiches it will send broadcast
+back to the first switch. STP disable one of the link, so it wont have this loop. If the other connection fails, STP reactive the disable
+connection avoinding total disruption, when the link came back STP disable the link.
+RST - Rapid Spanning Tree it is a protocol which quickly activate the link in case of failure 
+MST - Multiple Spanning Tree this protocol use VLAN instead the device itself, meaning you can have one link for one vlan1 and
+another link for vlan2, in case of a failure in link used by vlan2,  can be use autoamitaclly in vlan1 link. It is good to avoid
+congestion.
 
 
 
