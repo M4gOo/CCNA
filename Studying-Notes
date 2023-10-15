@@ -1972,6 +1972,12 @@ instead leave all access, first put the pc on quarantine so it can be update, ch
 ACL does is it identifies traffic that's going through the router and the router can then take an action based on that. The kind
 of things that it will look at to identify the traffic is source and destination IP addresses or port numbers.
 
+Whenever we've got any kind of software policy where we want to identify traffic and then take an action
+based on that, ACLs are one of the most common ways to do that.
+For example, let's say, we want to configure a quality of service policy.
+Let's say that we want to give our voice traffic coming from our IP phones, preferential treatment going through the router.
+Well, we can look at the traffic coming from our IP phones and we can then identify that based on an
+ACL and then use that in our QoS policy.
 
 
 
