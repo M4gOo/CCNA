@@ -1967,7 +1967,10 @@ instead leave all access, first put the pc on quarantine so it can be update, ch
 
 
 
+================== ACLs ===========================
 
+ACL does is it identifies traffic that's going through the router and the router can then take an action based on that. The kind
+of things that it will look at to identify the traffic is source and destination IP addresses or port numbers.
 
 
 
